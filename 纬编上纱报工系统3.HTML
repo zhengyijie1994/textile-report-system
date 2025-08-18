@@ -1,0 +1,3368 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>纺织厂报工系统</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
+  <style>
+    :root {
+      --primary: #2c6fbb;
+      --secondary: #6c757d;
+      --light: #f8f9fa;
+      --success: #28a745;
+      --warning: #ffc107;
+      --danger: #dc3545;
+      --info: #17a2b8;
+    }
+    body {
+      background-color: #f5f7fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.08);
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 15px 0;
+      margin-bottom: 25px;
+      border-bottom: 1px solid #eaeaea;
+      position: relative;
+    }
+    .header h3 {
+      color: var(--primary);
+      font-weight: 700;
+      margin: 0;
+    }
+    .header::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 4px;
+      background: var(--primary);
+      border-radius: 2px;
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .nav-tabs {
+      border-bottom: 2px solid #eaeaea;
+      margin-bottom: 20px;
+    }
+    .nav-tabs .nav-link {
+      font-weight: 600;
+      padding: 12px 25px;
+      border-radius: 8px 8px 0 0;
+      transition: all 0.3s ease;
+    }
+    .nav-tabs .nav-link.active {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 8px rgba(44, 111, 187, 0.2);
+    }
+    .tab-content {
+      padding: 25px;
+      border: 1px solid #eaeaea;
+      border-radius: 0 8px 8px 8px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    .worker-info {
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 20px;
+      border-radius: 12px;
+      background: white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .stat-card i {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      color: var(--primary);
+    }
+    .stat-card .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .chart-container {
+      height: 300px;
+      margin-top: 20px;
+    }
+    .match-result {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    .login-card {
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    .display-column {
+      background-color: #fff8e1;
+      font-weight: 600;
+    }
+    .deleted-worker {
+      background-color: #fff8f0;
+      color: #ff6b6b;
+    }
+    .deleted-worker td:last-child {
+      color: #ff6b6b;
+      font-style: italic;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 5px;
+    }
+    .action-buttons .btn {
+      padding: 0.25rem 0.5rem;
+      font-size: 0.875rem;
+    }
+    .pagination-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      padding: 10px 0;
+      border-top: 1px solid #eee;
+    }
+    .page-info {
+      font-size: 0.9rem;
+      color: #666;
+    }
+    .pagination-buttons {
+      display: flex;
+      gap: 5px;
+    }
+    /* 模糊匹配样式 */
+    .suggestion-highlight {
+      color: var(--primary);
+      font-weight: bold;
+      background-color: rgba(44, 111, 187, 0.1);
+    }
+    /* 测试数据样式 */
+    .test-data-card {
+      border-left: 4px solid #6f42c1;
+    }
+    .test-data-progress {
+      height: 10px;
+    }
+    .test-data-status {
+      font-size: 0.9rem;
+    }
+    /* 员工管理卡片样式 */
+    .worker-card {
+      border-top: 3px solid var(--primary);
+    }
+    .worker-card-header {
+      background-color: var(--primary);
+      color: white;
+      border-radius: 8px 8px 0 0 !important;
+    }
+    .worker-stat {
+      background-color: #e8f4ff;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+    .worker-stat:hover {
+      transform: scale(1.03);
+    }
+    .worker-stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .worker-stat-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    /* 新增样式 */
+    .loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(255, 255, 255, 0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1050;
+    }
+    .spinner-border {
+      width: 3rem;
+      height: 3rem;
+    }
+    .btn-hover-grow {
+      transition: transform 0.2s ease;
+    }
+    .btn-hover-grow:hover {
+      transform: scale(1.05);
+    }
+    .input-group-text {
+      background-color: #e9ecef;
+      transition: background-color 0.3s;
+    }
+    .input-group:focus-within .input-group-text {
+      background-color: #dde7f5;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 0.2rem rgba(44, 111, 187, 0.25);
+    }
+    .alert-floating {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      min-width: 300px;
+      opacity: 0.95;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      animation: fadeIn 0.3s, fadeOut 0.5s 2.5s;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 0.95; transform: translateY(0); }
+    }
+    @keyframes fadeOut {
+      from { opacity: 0.95; transform: translateY(0); }
+      to { opacity: 0; transform: translateY(-20px); }
+    }
+    .card-header {
+      font-weight: 600;
+    }
+    .table-hover tbody tr {
+      transition: background-color 0.2s;
+    }
+    .table-hover tbody tr:hover {
+      background-color: rgba(44, 111, 187, 0.05);
+    }
+    .badge-pill {
+      padding: 0.5em 0.8em;
+      border-radius: 10rem;
+    }
+    .progress-bar-striped {
+      background-image: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0.15) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(255, 255, 255, 0.15) 50%,
+        rgba(255, 255, 255, 0.15) 75%,
+        transparent 75%,
+        transparent
+      );
+      background-size: 1rem 1rem;
+    }
+    .btn-primary {
+      background-color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-primary:hover {
+      background-color: #235a9e;
+      border-color: #215397;
+    }
+    .btn-outline-primary {
+      color: var(--primary);
+      border-color: var(--primary);
+    }
+    .btn-outline-primary:hover {
+      background-color: var(--primary);
+      color: white;
+    }
+    .btn-success {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+    .btn-info {
+      background-color: var(--info);
+      border-color: var(--info);
+    }
+    .btn-warning {
+      background-color: var(--warning);
+      border-color: var(--warning);
+      color: #212529;
+    }
+    .btn-danger {
+      background-color: var(--danger);
+      border-color: var(--danger);
+    }
+    .form-label {
+      font-weight: 500;
+    }
+    .card {
+      border: none;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .card:hover {
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+    .nav-link {
+      position: relative;
+      overflow: hidden;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 3px;
+      background-color: var(--primary);
+      transform: scaleX(0);
+      transform-origin: right;
+      transition: transform 0.3s ease;
+    }
+    .nav-link.active::after,
+    .nav-link:hover::after {
+      transform: scaleX(1);
+      transform-origin: left;
+    }
+    .dropdown-menu {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    @media (max-width: 768px) {
+      .container {
+        margin: 10px;
+        padding: 15px;
+      }
+      .nav-tabs .nav-link {
+        padding: 8px 15px;
+        font-size: 0.9rem;
+      }
+      .tab-content {
+        padding: 15px;
+      }
+      .pagination-container {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .action-buttons {
+        flex-direction: column;
+        gap: 5px;
+      }
+      .row > * {
+        margin-bottom: 15px;
+      }
+    }
+    /* 设备管理模块样式 */
+    .machine-card {
+      border-top: 3px solid var(--primary);
+    }
+    .machine-card-header {
+      background-color: var(--primary);
+      color: white;
+      border-radius: 8px 8px 0 0 !important;
+    }
+    .machine-stat {
+      background-color: #e8f4ff;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 20px;
+      transition: transform 0.3s;
+    }
+    .machine-stat:hover {
+      transform: scale(1.03);
+    }
+    .machine-stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .machine-stat-label {
+      font-size: 0.9rem;
+      color: #6c757d;
+    }
+    /* 设备选择弹窗样式 - 更新为网格布局 */
+
+    .machine-search-container {
+        position: relative;
+        margin-bottom: 1rem;
+    }
+    .machine-search-container .form-control {
+        padding-left: 2.5rem; /* 为图标留出空间 */
+    }
+    .machine-search-icon {
+        position: absolute;
+        left: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #6c757d;
+    }
+    .machine-modal-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+    }
+    .machine-modal-count {
+        font-size: 0.875rem;
+        color: #6c757d;
+    }
+    .machine-modal-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+    
+    /* --- 1. 增大弹窗宽度以适应10列 --- */
+/* 针对超大屏幕 (通常 >= 1200px) */
+@media (min-width: 1200px) {
+  /* 增大 modal-xl 的最大宽度 */
+  .modal-xl {
+    max-width: 98vw; /* 使用视口宽度的 98%，留一点边距 */
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* 如果屏幕非常大，可以增加一个更大的断点 */
+@media (min-width: 1400px) {
+  .modal-xl {
+    max-width: 99vw; /* 例如，在更大的屏幕上使用 99vw */
+  }
+}
+
+
+/* --- 2. 调整设备列表网格为10列 --- */
+.machine-modal-list {
+  max-height: 400px; /* 可根据需要调整 */
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 0.375rem;
+  padding: 0.5rem 2px 0.5rem 2px; /* top, right, bottom, left */
+  display: grid;
+  /* --- 关键修改点：设置为10列 --- */
+  grid-template-columns: repeat(10, 1fr);
+  /* 减小间距以节省空间 */
+  gap: 4px; /* 可根据视觉效果微调 */
+}
+
+/* --- 3. 调整单个设备项样式以适应更窄的宽度 --- */
+.machine-modal-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* 减小内边距 */
+  padding: 6px 2px;
+  text-align: center;
+  /* 可以稍微减小字体大小 */
+  font-size: 0.85rem;
+  /* 保持最小高度一致 */
+  min-height: 55px;
+  /* 保持边框和圆角 */
+  border: 1px solid #e9ecef;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* 防止内容溢出 */
+  overflow: hidden;
+}
+
+.machine-modal-item:hover {
+  background-color: #f0f8ff;
+  border-color: var(--primary);
+  transform: scale(1.02); /* 轻微放大效果 */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.machine-modal-item.selected {
+  background-color: #e8f4ff;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(44, 111, 187, 0.25);
+}
+
+.machine-modal-id {
+  font-weight: bold;
+  color: var(--primary);
+  /* 字体大小可以和 .machine-modal-item 保持一致或稍大一点 */
+  font-size: 0.9rem;
+  margin-bottom: 0.1rem;
+  /* 防止编号过长溢出 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.machine-modal-desc {
+  font-size: 0.75rem; /* 稍微减小描述字体 */
+  color: #6c757d;
+  margin-top: 0.1rem;
+  text-align: center;
+  /* 确保描述也限制在一行内并有省略号 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+/* --- 4. （可选）优化搜索框 --- */
+.machine-search-container .form-control {
+  padding-left: 2.5rem; /* 为图标留出空间 */
+}
+
+/* --- 5. （可选）调整响应式断点 --- */
+/* 确保在更小的屏幕上会自动调整列数 */
+@media (max-width: 1200px) {
+  .machine-modal-list {
+    /* 例如，在中等屏幕下降到 8 列 */
+    grid-template-columns: repeat(8, 1fr);
+  }
+}
+@media (max-width: 992px) {
+  .machine-modal-list {
+    /* 平板每行 6 个 */
+    grid-template-columns: repeat(6, 1fr);
+  }
+}
+@media (max-width: 768px) {
+  .machine-modal-list {
+    /* 小屏幕每行 4 个 */
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+@media (max-width: 576px) {
+  .machine-modal-list {
+    /* 手机每行 2 个 */
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* --- 6. （临时）确保修改生效 --- */
+/* 最好通过调整CSS顺序或特异性来避免使用 !important，
+   但如果修改后未生效，可以临时使用 !important 测试。
+   测试成功后，应移除 !important 并通过正确的CSS优先级管理样式。 */
+/*
+.machine-modal-list {
+    grid-template-columns: repeat(10, 1fr) !important;
+    gap: 4px !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+}
+*/
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h3><i class="fas fa-industry me-2"></i>纺织厂报工系统</h3>
+    </div>
+    <!-- 导航选项卡 -->
+    <ul class="nav nav-tabs" id="mainTabs" role="tablist">
+      <li class="nav-item" role="presentation">
+        <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login-pane" type="button" role="tab">
+          <i class="fas fa-sign-in-alt me-2"></i>工号登录
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="report-tab" data-bs-toggle="tab" data-bs-target="#report-pane" type="button" role="tab" disabled>
+          <i class="fas fa-edit me-2"></i>报工录入
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="summary-tab" data-bs-toggle="tab" data-bs-target="#summary-pane" type="button" role="tab">
+          <i class="fas fa-list-alt me-2"></i>报工汇总
+        </button>
+      </li>
+      <!-- 新增员工管理选项卡 -->
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="worker-tab" data-bs-toggle="tab" data-bs-target="#worker-pane" type="button" role="tab">
+          <i class="fas fa-users me-2"></i>员工管理
+        </button>
+      </li>
+      <!-- 新增设备管理选项卡 -->
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="machine-tab" data-bs-toggle="tab" data-bs-target="#machine-pane" type="button" role="tab">
+          <i class="fas fa-cogs me-2"></i>设备管理
+        </button>
+      </li>
+      <li class="nav-item" role="presentation">
+        <button class="nav-link" id="settings-tab" data-bs-toggle="tab" data-bs-target="#settings-pane" type="button" role="tab">
+          <i class="fas fa-cog me-2"></i>系统设置
+        </button>
+      </li>
+    </ul>
+    <!-- 选项卡内容 -->
+    <div class="tab-content" id="mainTabsContent">
+      <!-- 工号登录面板 -->
+      <div class="tab-pane fade show active" id="login-pane" role="tabpanel">
+        <div class="login-card card">
+          <div class="card-header">选择工号登录</div>
+          <div class="card-body">
+            <div class="form-group mb-3">
+              <label for="workerSelect" class="form-label">选择员工：</label>
+              <select id="workerSelect" class="form-control">
+                <option value="">-- 请选择员工 --</option>
+              </select>
+            </div>
+            <!-- 新增作业区域选择 -->
+            <div class="form-group mb-4">
+              <label for="workAreaSelect" class="form-label">作业区域：</label>
+              <select id="workAreaSelect" class="form-control">
+                <option value="10车间">10车间</option>
+                <option value="纬编百兴G1-4楼">纬编百兴G1-4楼</option>
+                <option value="纬编百兴G1-5楼">纬编百兴G1-5楼</option>
+                <option value="纬编百兴G2-1楼">纬编百兴G2-1楼</option>
+                <option value="纬编百兴G2-2楼">纬编百兴G2-2楼</option>
+                <option value="纬编百兴G2-4楼">纬编百兴G2-4楼</option>
+                <option value="纬编百兴G2-5楼">纬编百兴G2-5楼</option>
+              </select>
+            </div>
+            <div class="text-center">
+              <button id="confirmWorkerBtn" class="btn btn-primary w-100 btn-hover-grow">
+                <i class="fas fa-check-circle me-2"></i>确认登录
+              </button>
+            </div>
+            <div id="workerInfo" class="mt-4 alert alert-info" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+      <!-- 报工录入面板 -->
+      <div class="tab-pane fade" id="report-pane" role="tabpanel">
+        <div class="worker-info alert alert-success d-flex justify-content-between align-items-center">
+          <div>
+            <strong>当前用户：</strong>
+            <span id="currentWorkerName"></span>
+            (<span id="currentWorkerId"></span>)
+            <span class="ms-2 badge bg-primary badge-pill" id="currentWorkArea"></span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">报工信息录入</div>
+          <div class="card-body">
+            <form id="reportForm">
+              <div class="row mb-3">
+                <div class="col-md-6">
+    <div class="form-group">
+        <label for="machineId">设备编号：</label>
+        <div class="input-group">
+            <input type="text" id="machineId" class="form-control" placeholder="请输入或选择设备编号" required>
+            <button type="button" id="selectMachineBtn" class="btn btn-outline-primary" title="选择设备"><i class="fas fa-list"></i></button>
+            <button type="button" id="toggleMachineInputBtn" class="btn btn-outline-secondary btn-hover-grow" title="切换手动输入"><i class="fas fa-keyboard"></i></button>
+        </div>
+        <div class="form-text">点击 <i class="fas fa-list"></i> 选择设备，或点击 <i class="fas fa-keyboard"></i> 手动输入</div>
+    </div>
+</div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="greyClothId">坯布编号：</label>
+                    <input type="text" id="greyClothId" class="form-control" required>
+                    <div id="greyClothSuggestions" class="dropdown-menu"></div>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="materialCode">原料编号：</label>
+                    <div class="input-group">
+                      <input type="text" id="materialCode" class="form-control" readonly>
+                      <button type="button" id="toggleMaterialInputBtn" class="btn btn-outline-secondary btn-hover-grow">
+                        <i class="fas fa-pencil-alt"></i>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="materialName">原料名称：</label>
+                    <input type="text" id="materialName" class="form-control" readonly>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="operationType">操作类型：</label>
+                    <select id="operationType" class="form-control" required>
+                      <option value="上纱" selected>上纱</option>
+                      <option value="下纱">下纱</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="grainCount">粒数：</label>
+                    <input type="number" id="grainCount" class="form-control" min="1" max="300" required>
+                  </div>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="grainWeight">粒重（KG）：</label>
+                    <div class="input-group">
+                      <input type="number" id="grainWeight" class="form-control" min="0" max="15" step="0.5" placeholder="请输入粒重" required>
+                      <select class="form-select" id="grainWeightOptions" style="max-width: 150px;">
+                        <option value="">常用值</option>
+                        <option value="1">1</option>
+                        <option value="1.5">1.5</option>
+                        <option value="2">2</option>
+                        <option value="2.5">2.5</option>
+                        <option value="3">3</option>
+                        <option value="3.5">3.5</option>
+                        <option value="4">4</option>
+                        <option value="4.5">4.5</option>
+                        <option value="5">5</option>
+                        <option value="5.5">5.5</option>
+                        <option value="6">6</option>
+                        <option value="6.5">6.5</option>
+                        <option value="7">7</option>
+                        <option value="7.5">7.5</option>
+                        <option value="8">8</option>
+                        <option value="8.5">8.5</option>
+                        <option value="9">9</option>
+                        <option value="9.5">9.5</option>
+                        <option value="10">10</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="productionDate">生产日期：</label>
+                    <input type="date" id="productionDate" class="form-control" required>
+                  </div>
+                </div>
+              </div>
+              <div class="form-group mb-4">
+                <label for="remarks">备注：</label>
+                <textarea id="remarks" class="form-control" rows="2"></textarea>
+              </div>
+              <div class="d-flex justify-content-between">
+                <div>
+                  <button type="submit" class="btn btn-primary me-2 btn-hover-grow">
+                    <i class="fas fa-paper-plane me-2"></i>提交报工
+                  </button>
+                  <button type="button" id="resetReportBtn" class="btn btn-secondary me-2 btn-hover-grow">
+                    <i class="fas fa-redo me-2"></i>重置
+                  </button>
+                </div>
+                <button type="button" id="uploadExcelBtn" class="btn btn-info btn-hover-grow">
+                  <i class="fas fa-upload me-2"></i>上传匹配表
+                </button>
+              </div>
+            </form>
+            <div id="matchResult" class="match-result mt-4" style="display: none;"></div>
+          </div>
+        </div>
+      </div>
+      <!-- 报工汇总面板 -->
+      <div class="tab-pane fade" id="summary-pane" role="tabpanel">
+        <div class="row mb-4">
+          <div class="col-md-3">
+            <div class="stat-card">
+              <i class="fas fa-file-alt"></i>
+              <div class="value" id="totalReports">0</div>
+              <div class="label">总报工数</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <i class="fas fa-cubes"></i>
+              <div class="value" id="totalGrains">0</div>
+              <div class="label">总粒数</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <i class="fas fa-weight-hanging"></i>
+              <div class="value" id="totalWeight">0</div>
+              <div class="label">总重量(KG)</div>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="stat-card">
+              <i class="fas fa-users"></i>
+              <div class="value" id="totalWorkers">0</div>
+              <div class="label">员工总数</div>
+            </div>
+          </div>
+        </div>
+        <div class="card mb-4">
+          <div class="card-header d-flex justify-content-between align-items-center">
+            <span>报工数据筛选</span>
+            <button id="exportExcelBtn" class="btn btn-success btn-sm btn-hover-grow">
+              <i class="fas fa-file-excel me-2"></i>导出Excel
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="row mb-4">
+              <div class="col-md-3">
+                <label for="summaryWorkerId">按工号筛选：</label>
+                <select id="summaryWorkerId" class="form-control">
+                  <option value="">全部工号</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="summaryWorkArea">作业区域：</label>
+                <select id="summaryWorkArea" class="form-control">
+                  <option value="">全部区域</option>
+                  <option value="10车间">10车间</option>
+                  <option value="纬编百兴G1-4楼">纬编百兴G1-4楼</option>
+                  <option value="纬编百兴G1-5楼">纬编百兴G1-5楼</option>
+                  <option value="纬编百兴G2-1楼">纬编百兴G2-1楼</option>
+                  <option value="纬编百兴G2-2楼">纬编百兴G2-2楼</option>
+                  <option value="纬编百兴G2-4楼">纬编百兴G2-4楼</option>
+                  <option value="纬编百兴G2-5楼">纬编百兴G2-5楼</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label for="summaryDateFrom">开始日期：</label>
+                <input type="date" id="summaryDateFrom" class="form-control">
+              </div>
+              <div class="col-md-3">
+                <label for="summaryDateTo">结束日期：</label>
+                <input type="date" id="summaryDateTo" class="form-control">
+              </div>
+            </div>
+            <div class="row mb-4">
+              <div class="col-md-3">
+                <label for="summaryOperationType">操作类型：</label>
+                <select id="summaryOperationType" class="form-control">
+                  <option value="">全部类型</option>
+                  <option value="上纱">上纱</option>
+                  <option value="下纱">下纱</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label>&nbsp;</label>
+                <button id="filterSummaryBtn" class="btn btn-primary w-100 btn-hover-grow">
+                  <i class="fas fa-filter me-2"></i>筛选
+                </button>
+              </div>
+              <div class="col-md-6">
+                <label>&nbsp;</label>
+                <button id="clearFilterBtn" class="btn btn-outline-secondary w-100 btn-hover-grow">
+                  <i class="fas fa-times-circle me-2"></i>清除筛选
+                </button>
+              </div>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>序号</th>
+                    <th>工号</th>
+                    <th>姓名</th>
+                    <th>作业区域</th>
+                    <th>设备编号</th>
+                    <th>坯布编号</th>
+                    <th>原料名称</th>
+                    <th>操作类型</th>
+                    <th>粒数</th>
+                    <th>粒重(KG)</th>
+                    <th>总重量(KG)</th>
+                    <th>日期</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="summaryTableBody">
+                  <tr>
+                    <td colspan="13" class="text-center">暂无数据</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <!-- 分页控件 -->
+            <div class="pagination-container">
+              <div class="page-info">
+                共 <span id="totalRecords">0</span> 条记录，每页 30 条
+              </div>
+              <div class="pagination-buttons">
+                <button id="prevPageBtn" class="btn btn-sm btn-outline-primary" disabled>
+                  <i class="fas fa-chevron-left me-1"></i>上一页
+                </button>
+                <span class="mx-2">
+                  第 <span id="currentPage">1</span> 页 / 共 <span id="totalPages">1</span> 页
+                </span>
+                <button id="nextPageBtn" class="btn btn-sm btn-outline-primary" disabled>
+                  下一页<i class="fas fa-chevron-right ms-1"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">报工类型分布</div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="operationTypeChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header">员工报工量排名</div>
+              <div class="card-body">
+                <div class="chart-container">
+                  <canvas id="workerRankingChart"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 新增员工管理面板 -->
+      <div class="tab-pane fade" id="worker-pane" role="tabpanel">
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="worker-stat">
+              <div class="worker-stat-value" id="totalWorkersCount">0</div>
+              <div class="worker-stat-label">员工总数</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="worker-stat">
+              <div class="worker-stat-value" id="activeWorkersCount">0</div>
+              <div class="worker-stat-label">活跃员工</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="worker-stat">
+              <div class="worker-stat-value" id="avgReports">0</div>
+              <div class="worker-stat-label">人均报工数</div>
+            </div>
+          </div>
+        </div>
+        <div class="card worker-card mb-4">
+          <div class="card-header worker-card-header">
+            <i class="fas fa-user-plus me-2"></i>添加新员工
+          </div>
+          <div class="card-body">
+            <div class="worker-form">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="newWorkerId" class="form-label">工号：</label>
+                    <input type="text" id="newWorkerId" class="form-control" placeholder="输入新工号">
+                    <div class="form-text">工号必须是唯一的数字标识</div>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="form-group mb-3">
+                    <label for="newWorkerName" class="form-label">姓名：</label>
+                    <input type="text" id="newWorkerName" class="form-control" placeholder="输入姓名">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="d-grid">
+                    <button id="addWorkerBtn" class="btn btn-primary btn-hover-grow">
+                      <i class="fas fa-user-plus me-2"></i>添加员工
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card worker-card">
+          <div class="card-header worker-card-header">
+            <i class="fas fa-users me-2"></i>员工列表管理
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>序号</th>
+                    <th>工号</th>
+                    <th>姓名</th>
+                    <th>报工次数</th>
+                    <th>最近报工日期</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="workersTableBody">
+                  <tr>
+                    <td colspan="6" class="text-center">暂无员工数据</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+       <!-- 新增设备管理面板 -->
+       <div class="tab-pane fade" id="machine-pane" role="tabpanel">
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <div class="machine-stat">
+              <div class="machine-stat-value" id="totalMachinesCount">0</div>
+              <div class="machine-stat-label">设备总数</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="machine-stat">
+              <div class="machine-stat-value" id="totalAreasCount">0</div>
+              <div class="machine-stat-label">作业区域数</div>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="machine-stat">
+              <div class="machine-stat-value" id="avgMachinesPerArea">0</div>
+              <div class="machine-stat-label">平均每区域设备数</div>
+            </div>
+          </div>
+        </div>
+<!-- 新增：全部删除按钮区域 -->
+<div class="row mb-3">
+  <div class="col-md-12">
+    <!-- 全部删除按钮 -->
+    <button id="deleteAllMachinesBtn" class="btn btn-danger btn-sm" title="删除所有设备">
+      <i class="fas fa-trash-alt me-1"></i>全部删除
+    </button>
+    <!-- 如果您希望按钮靠右对齐，可以使用下面的代码替换上面的 button 标签：
+    <div class="text-end">
+      <button id="deleteAllMachinesBtn" class="btn btn-danger btn-sm" title="删除所有设备">
+        <i class="fas fa-trash-alt me-1"></i>全部删除
+      </button>
+    </div>
+    -->
+  </div>
+</div>
+<!-- /新增：全部删除按钮区域 -->
+        <div class="card machine-card mb-4">
+          <div class="card-header machine-card-header d-flex justify-content-between align-items-center">
+            <span><i class="fas fa-cog me-2"></i>添加新设备</span>
+            <button id="importMachinesBtn" class="btn btn-sm btn-light">
+              <i class="fas fa-file-import me-2"></i>批量导入
+            </button>
+          </div>
+          <div class="card-body">
+            <div class="machine-form">
+              <div class="row">
+                <div class="col-md-4">
+                  <div class="form-group mb-3">
+                    <label for="newMachineArea" class="form-label">作业区域：</label>
+                    <select id="newMachineArea" class="form-control">
+                      <option value="10车间">10车间</option>
+                      <option value="纬编百兴G1-4楼">纬编百兴G1-4楼</option>
+                      <option value="纬编百兴G1-5楼">纬编百兴G1-5楼</option>
+                      <option value="纬编百兴G2-1楼">纬编百兴G2-1楼</option>
+                      <option value="纬编百兴G2-2楼">纬编百兴G2-2楼</option>
+                      <option value="纬编百兴G2-4楼">纬编百兴G2-4楼</option>
+                      <option value="纬编百兴G2-5楼">纬编百兴G2-5楼</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group mb-3">
+                    <label for="newMachineId" class="form-label">设备编号：</label>
+                    <input type="text" id="newMachineId" class="form-control" placeholder="输入设备编号 (例如: W001)">
+                    <div class="form-text">编号必须唯一</div>
+                  </div>
+                </div>
+                <div class="col-md-4">
+                  <div class="form-group mb-3">
+                    <label for="newMachineDesc" class="form-label">设备描述：</label>
+                    <input type="text" id="newMachineDesc" class="form-control" placeholder="输入设备描述 (可选)">
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-md-12">
+                  <div class="d-grid">
+                    <button id="addMachineBtn" class="btn btn-primary btn-hover-grow">
+                      <i class="fas fa-plus-circle me-2"></i>添加设备
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card machine-card">
+          <div class="card-header machine-card-header">
+            <i class="fas fa-list me-2"></i>设备列表管理
+          </div>
+          <div class="card-body">
+            <div class="mb-3">
+              <label for="machineAreaFilter" class="form-label">按作业区域筛选：</label>
+              <select id="machineAreaFilter" class="form-control">
+                <option value="">全部区域</option>
+                <option value="10车间">10车间</option>
+                <option value="纬编百兴G1-4楼">纬编百兴G1-4楼</option>
+                <option value="纬编百兴G1-5楼">纬编百兴G1-5楼</option>
+                <option value="纬编百兴G2-1楼">纬编百兴G2-1楼</option>
+                <option value="纬编百兴G2-2楼">纬编百兴G2-2楼</option>
+                <option value="纬编百兴G2-4楼">纬编百兴G2-4楼</option>
+                <option value="纬编百兴G2-5楼">纬编百兴G2-5楼</option>
+              </select>
+            </div>
+            <div class="table-responsive">
+              <table class="table table-bordered table-hover">
+                <thead class="table-light">
+                  <tr>
+                    <th>序号</th>
+                    <th>作业区域</th>
+                    <th>设备编号</th>
+                    <th>设备描述</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody id="machinesTableBody">
+                  <tr>
+                    <td colspan="5" class="text-center">暂无设备数据</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 系统设置面板 -->
+      <div class="tab-pane fade" id="settings-pane" role="tabpanel">
+        <div class="card mb-4">
+          <div class="card-header">数据管理</div>
+          <div class="card-body">
+            <div class="alert alert-info mb-4">
+              <i class="fas fa-info-circle me-2"></i>
+              为防止数据溢出，请定期清理旧数据或导出备份
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="card mb-3">
+                  <div class="card-body">
+                    <h5 class="card-title">按日期删除数据</h5>
+                    <div class="mb-3">
+                      <label for="deleteDateFrom" class="form-label">开始日期：</label>
+                      <input type="date" id="deleteDateFrom" class="form-control">
+                    </div>
+                    <div class="mb-3">
+                      <label for="deleteDateTo" class="form-label">结束日期：</label>
+                      <input type="date" id="deleteDateTo" class="form-control">
+                    </div>
+                    <button id="deleteByDateBtn" class="btn btn-danger w-100 btn-hover-grow">
+                      <i class="fas fa-trash-alt me-2"></i>删除选定日期数据
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card">
+                  <div class="card-body">
+                    <h5 class="card-title">备份与恢复</h5>
+                    <button id="exportAllDataBtn" class="btn btn-success w-100 mb-3 btn-hover-grow">
+                      <i class="fas fa-download me-2"></i>导出所有数据
+                    </button>
+                    <button id="clearAllDataBtn" class="btn btn-danger w-100 btn-hover-grow">
+                      <i class="fas fa-trash-alt me-2"></i>清空所有数据
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- 新增测试数据生成功能 -->
+        <div class="card mb-4 test-data-card">
+          <div class="card-header">系统压力测试</div>
+          <div class="card-body">
+            <div class="alert alert-warning mb-4">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              此功能用于测试系统最大报工量，生成的数据为模拟数据
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="testDataCount" class="form-label">生成记录数量：</label>
+                  <input type="number" id="testDataCount" class="form-control" min="100" max="100000" value="1000">
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="form-group mb-3">
+                  <label for="testDataDateRange" class="form-label">日期范围：</label>
+                  <select id="testDataDateRange" class="form-control">
+                    <option value="30">最近30天</option>
+                    <option value="90">最近90天</option>
+                    <option value="180">最近180天</option>
+                    <option value="365">最近1年</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <div class="mb-3">
+              <div class="d-flex justify-content-between mb-1">
+                <span>测试数据生成进度：</span>
+                <span id="testProgressText">0%</span>
+              </div>
+              <div class="progress test-data-progress">
+                <div id="testDataProgress" class="progress-bar bg-success progress-bar-striped" role="progressbar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="text-center">
+              <button id="generateTestDataBtn" class="btn btn-info w-100 btn-hover-grow">
+                <i class="fas fa-bolt me-2"></i>生成测试数据
+              </button>
+            </div>
+            <div id="testDataStatus" class="mt-3 test-data-status"></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">系统信息</div>
+          <div class="card-body">
+            <div class="mb-3">
+              <div class="d-flex justify-content-between">
+                <span>本地存储使用情况：</span>
+                <span id="storageUsage">0 KB / 0 KB</span>
+              </div>
+              <div class="progress mt-2" style="height: 10px;">
+                <div id="storageProgress" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="alert alert-warning">
+              <i class="fas fa-exclamation-triangle me-2"></i>
+              当存储使用超过80%时，建议清理旧数据或导出备份
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 加载指示器 -->
+  <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">加载中...</span>
+    </div>
+  </div>
+  <!-- 原料匹配表上传模态框 -->
+  <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="uploadModalLabel">上传原料匹配表</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="excelFile" class="form-label">选择Excel文件：</label>
+            <input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls">
+          </div>
+          <div id="uploadStatus" class="mb-3"></div>
+          <div class="table-responsive">
+            <table class="table table-bordered mt-3" id="excelPreview">
+              <thead>
+                <tr>
+                  <th>坯布编号</th>
+                  <th>原料编号</th>
+                  <th>原料名称</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="3" class="text-center">上传Excel文件后预览数据</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" id="processExcelBtn" class="btn btn-primary">处理文件</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 编辑报工记录模态框 -->
+  <div class="modal fade" id="editReportModal" tabindex="-1" aria-labelledby="editReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editReportModalLabel">编辑报工记录</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editReportForm">
+            <input type="hidden" id="editReportId">
+            <div class="mb-3">
+              <label for="editWorkerId" class="form-label">工号</label>
+              <input type="text" id="editWorkerId" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="editWorkerName" class="form-label">姓名</label>
+              <input type="text" id="editWorkerName" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="editWorkArea" class="form-label">作业区域</label>
+              <input type="text" id="editWorkArea" class="form-control" readonly>
+            </div>
+            <div class="mb-3">
+              <label for="editMachineId" class="form-label">设备编号</label>
+              <input type="text" id="editMachineId" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="editGreyClothId" class="form-label">坯布编号</label>
+              <input type="text" id="editGreyClothId" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="editMaterialName" class="form-label">原料名称</label>
+              <input type="text" id="editMaterialName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+              <label for="editOperationType" class="form-label">操作类型</label>
+              <select id="editOperationType" class="form-control" required>
+                <option value="上纱">上纱</option>
+                <option value="下纱">下纱</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label for="editGrainCount" class="form-label">粒数</label>
+              <input type="number" id="editGrainCount" class="form-control" min="1" max="300" required>
+            </div>
+            <div class="mb-3">
+              <label for="editGrainWeight" class="form-label">粒重(KG)</label>
+              <div class="input-group">
+                <input type="number" id="editGrainWeight" class="form-control" min="0" max="15" step="0.5" required>
+                <select class="form-select" id="editGrainWeightOptions" style="max-width: 150px;">
+                  <option value="">常用值</option>
+                  <option value="1">1</option>
+                  <option value="1.5">1.5</option>
+                  <option value="2">2</option>
+                  <option value="2.5">2.5</option>
+                  <option value="3">3</option>
+                  <option value="3.5">3.5</option>
+                  <option value="4">4</option>
+                  <option value="4.5">4.5</option>
+                  <option value="5">5</option>
+                  <option value="5.5">5.5</option>
+                  <option value="6">6</option>
+                  <option value="6.5">6.5</option>
+                  <option value="7">7</option>
+                  <option value="7.5">7.5</option>
+                  <option value="8">8</option>
+                  <option value="8.5">8.5</option>
+                  <option value="9">9</option>
+                  <option value="9.5">9.5</option>
+                  <option value="10">10</option>
+                </select>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="editProductionDate" class="form-label">生产日期</label>
+              <input type="date" id="editProductionDate" class="form-control" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+          <button type="button" id="saveReportBtn" class="btn btn-primary">保存修改</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 导出进度模态框 -->
+  <div class="modal fade" id="exportProgressModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">导出数据</h5>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <div class="d-flex justify-content-between mb-1">
+              <span>导出进度：</span>
+              <span id="exportProgressText">0%</span>
+            </div>
+            <div class="progress">
+              <div id="exportProgressBar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"></div>
+            </div>
+          </div>
+          <div id="exportStatus" class="mt-2"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+   <!-- 设备批量导入模态框 -->
+  <div class="modal fade" id="importMachinesModal" tabindex="-1" aria-labelledby="importMachinesModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="importMachinesModalLabel">批量导入设备</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="importMachinesFile" class="form-label">选择Excel文件：</label>
+            <input type="file" class="form-control" id="importMachinesFile" accept=".xlsx,.xls">
+          </div>
+          <div id="importMachinesStatus" class="mb-3"></div>
+          <div class="table-responsive">
+            <table class="table table-bordered mt-3" id="importMachinesPreview">
+              <thead>
+                <tr>
+                  <th>作业区域</th>
+                  <th>设备编号</th>
+                  <th>设备描述</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="3" class="text-center">上传Excel文件后预览数据</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+          <button type="button" id="processImportMachinesBtn" class="btn btn-primary">导入设备</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 设备选择弹窗 - 更新为网格布局 -->
+  <div class="modal fade" id="machineSelectModal" tabindex="-1" aria-labelledby="machineSelectModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl"> <!-- 使用更大的模态框以适应网格 -->
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="machineSelectModalLabel">选择设备</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="machine-search-container">
+            <i class="fas fa-search machine-search-icon"></i>
+            <input type="text" id="machineSearchInput" class="form-control" placeholder="搜索设备编号或描述...">
+          </div>
+          <div id="machineSelectList" class="machine-modal-list">
+            <div class="text-center text-muted">暂无设备数据</div>
+          </div>
+          <div class="machine-modal-footer">
+            <div class="machine-modal-count">
+              共 <span id="machineModalCount">0</span> 台设备
+            </div>
+            <div class="machine-modal-buttons">
+              <button type="button" id="closeMachineModalBtn" class="btn btn-secondary btn-sm">
+                关闭
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    // 全局变量
+    let currentWorkerId = '';
+    let currentWorkArea = '';
+    let materialMatches = [];
+    let filteredReports = [];
+    let workers = [];
+    let reports = [];
+    let machines = []; // 新增设备管理数据
+    let typeChartInstance = null;
+    let rankingChartInstance = null;
+    let manualInputEnabled = false;
+    let manualMachineInputEnabled = false; // 新增设备手动输入状态
+    let debounceTimer = null;
+    // 分页相关变量
+    let currentPage = 1;
+    const itemsPerPage = 30;
+    // 数据库对象
+    let db = null;
+    const DB_NAME = 'textileReportSystem';
+    const DB_VERSION = 4; // 更新数据库版本以包含设备表
+    const MATERIAL_STORE = 'materialMatches'; // 不再使用IndexedDB存储匹配表
+    const WORKERS_STORE = 'workers';
+    const REPORTS_STORE = 'reports';
+    const MACHINES_STORE = 'machines'; // 新增设备存储
+    // DOM元素
+    const tabs = bootstrap.Tab.getOrCreateInstance(document.getElementById('mainTabs'));
+    const reportTab = document.getElementById('report-tab');
+    const greyClothIdInput = document.getElementById('greyClothId');
+    const greyClothSuggestions = document.getElementById('greyClothSuggestions');
+    const loadingOverlay = document.getElementById('loadingOverlay');
+    // 显示加载指示器
+    function showLoading() {
+      loadingOverlay.style.display = 'flex';
+    }
+    // 隐藏加载指示器
+    function hideLoading() {
+      loadingOverlay.style.display = 'none';
+    }
+    // 初始化数据库 - 修复版
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, DB_VERSION);
+        request.onupgradeneeded = function(event) {
+          db = event.target.result;
+          const oldVersion = event.oldVersion;
+          // 处理旧版本升级
+          if (oldVersion < 3) {
+            // 删除旧的对象存储（如果存在）
+            if (db.objectStoreNames.contains('materialMatches')) {
+              db.deleteObjectStore('materialMatches');
+            }
+          }
+          // 创建需要的对象存储
+          if (!db.objectStoreNames.contains(WORKERS_STORE)) {
+            db.createObjectStore(WORKERS_STORE, { keyPath: 'workerId' });
+          }
+          if (!db.objectStoreNames.contains(REPORTS_STORE)) {
+            db.createObjectStore(REPORTS_STORE, { keyPath: 'reportId' });
+          }
+          // 新增设备管理对象存储 (版本4)
+          if (oldVersion < 4) {
+            if (!db.objectStoreNames.contains(MACHINES_STORE)) {
+                db.createObjectStore(MACHINES_STORE, { keyPath: 'machineId' });
+            }
+          }
+        };
+        request.onsuccess = function(event) {
+          db = event.target.result;
+          resolve();
+        };
+        request.onerror = function(event) {
+          console.error('数据库初始化失败:', event.target.error);
+          // 尝试删除数据库并重建
+          const deleteRequest = indexedDB.deleteDatabase(DB_NAME);
+          deleteRequest.onsuccess = function() {
+            console.log('数据库删除成功，重新初始化');
+            const retryRequest = indexedDB.open(DB_NAME, DB_VERSION);
+            retryRequest.onsuccess = function(retryEvent) {
+              db = retryEvent.target.result;
+              resolve();
+            };
+            retryRequest.onerror = function(retryEvent) {
+              console.error('重试打开数据库失败:', retryEvent.target.error);
+              reject(retryEvent.target.error);
+            };
+          };
+          deleteRequest.onerror = function(deleteEvent) {
+            console.error('删除数据库失败:', deleteEvent.target.error);
+            reject(deleteEvent.target.error);
+          };
+        };
+      });
+    }
+    // 从IndexedDB加载数据
+    function loadDataFromDB() {
+      return new Promise((resolve) => {
+        const transaction = db.transaction([WORKERS_STORE, REPORTS_STORE, MACHINES_STORE], 'readonly');
+        // 从localStorage加载原料匹配表
+        const savedMatches = localStorage.getItem('materialMatches');
+        if (savedMatches) {
+          try {
+            materialMatches = JSON.parse(savedMatches);
+          } catch (e) {
+            console.error('解析匹配表数据失败:', e);
+            materialMatches = [];
+          }
+        } else {
+          materialMatches = [];
+        }
+        // 加载员工数据
+        const workersStore = transaction.objectStore(WORKERS_STORE);
+        workersStore.getAll().onsuccess = function(event) {
+          workers = event.target.result || [];
+          if (workers.length === 0) {
+            // 默认员工数据
+            workers = [
+              { workerId: '2101001', name: '张三' },
+              { workerId: '2101002', name: '李四' },
+              { workerId: '2101003', name: '王五' }
+            ];
+          }
+          // 修复：加载员工后更新下拉框
+          updateWorkerSelect();
+          updateWorkerStats();
+        };
+        // 加载报工记录
+        const reportsStore = transaction.objectStore(REPORTS_STORE);
+        reportsStore.getAll().onsuccess = function(event) {
+          reports = event.target.result || [];
+          // 按时间戳倒序排序（最新数据在前）
+          reports.sort((a, b) => b.timestamp - a.timestamp);
+          filteredReports = [...reports];
+        };
+        // 加载设备数据
+        const machinesStore = transaction.objectStore(MACHINES_STORE);
+        machinesStore.getAll().onsuccess = function(event) {
+          machines = event.target.result || [];
+          updateMachinesTable(); // 更新设备管理界面
+          updateMachineStats(); // 更新设备统计
+        };
+        transaction.oncomplete = function() {
+          resolve();
+        };
+      });
+    }
+    // 保存数据到IndexedDB
+    function saveDataToDB(storeName, data) {
+      return new Promise((resolve, reject) => {
+        const transaction = db.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const clearRequest = store.clear();
+        clearRequest.onsuccess = function() {
+          if (data.length === 0) {
+            resolve();
+            return;
+          }
+          let count = 0;
+          data.forEach(item => {
+            const request = store.add(item);
+            request.onsuccess = function() {
+              count++;
+              if (count === data.length) {
+                resolve();
+              }
+            };
+            request.onerror = function(event) {
+              console.error(`保存${storeName}数据失败:`, event.target.error);
+              reject(event.target.error);
+            };
+          });
+        };
+        clearRequest.onerror = function(event) {
+          console.error(`清除${storeName}数据失败:`, event.target.error);
+          reject(event.target.error);
+        };
+      });
+    }
+    // 初始化
+    document.addEventListener('DOMContentLoaded', async () => {
+      document.getElementById('productionDate').valueAsDate = new Date();
+      try {
+        showLoading();
+        await initDatabase();
+        await loadDataFromDB();
+        initEventListeners();
+        updateWorkersTable();
+        updateSummaryStats();
+        startMemoryMonitoring();
+        hideLoading();
+      } catch (error) {
+        console.error('初始化失败:', error);
+        showAlert('系统初始化失败，请刷新页面重试', 'danger');
+        hideLoading();
+      }
+    });
+    // 启动内存监控
+    function startMemoryMonitoring() {
+      updateMemoryUsage();
+      memoryCheckInterval = setInterval(updateMemoryUsage, 5000);
+    }
+    // 更新内存使用情况
+    function updateMemoryUsage() {
+      try {
+        // 估算存储使用量
+        const reportsSize = JSON.stringify(reports).length;
+        const workersSize = JSON.stringify(workers).length;
+        const matchesSize = JSON.stringify(materialMatches).length;
+        const machinesSize = JSON.stringify(machines).length; // 包含设备数据
+        const totalSize = reportsSize + workersSize + matchesSize + machinesSize;
+        // 转换为KB
+        const totalKB = (totalSize / 1024).toFixed(2);
+        // 计算使用率（假设最大存储为10MB）
+        const maxStorage = 10 * 1024; // 10MB in KB
+        const usagePercentage = Math.min(100, (totalKB / maxStorage) * 100);
+        // 更新系统信息面板
+        document.getElementById('storageUsage').textContent = `${totalKB} KB / ${maxStorage} KB`;
+        document.getElementById('storageProgress').style.width = `${usagePercentage}%`;
+        // 添加警告样式
+        const storageProgress = document.getElementById('storageProgress');
+        storageProgress.classList.remove('bg-warning', 'bg-danger');
+        if (usagePercentage > 80) {
+          storageProgress.classList.add('bg-danger');
+        } else if (usagePercentage > 60) {
+          storageProgress.classList.add('bg-warning');
+        }
+      } catch (e) {
+        console.error('存储监控出错:', e);
+      }
+    }
+    // 更新员工选择下拉框
+    function updateWorkerSelect() {
+      const workerSelect = document.getElementById('workerSelect');
+      workerSelect.innerHTML = '<option value="">-- 请选择员工 --</option>';
+      workers.forEach(worker => {
+        const option = document.createElement('option');
+        option.value = worker.workerId;
+        option.textContent = `${worker.workerId} - ${worker.name}`;
+        workerSelect.appendChild(option);
+      });
+    }
+    // 初始化事件监听
+    function initEventListeners() {
+      document.getElementById('confirmWorkerBtn').addEventListener('click', confirmWorker);
+      document.getElementById('reportForm').addEventListener('submit', handleSubmit);
+      document.getElementById('resetReportBtn').addEventListener('click', resetReportForm);
+      greyClothIdInput.addEventListener('input', handleGreyClothInput);
+      document.getElementById('uploadExcelBtn').addEventListener('click', () => {
+        document.getElementById('uploadModal').querySelector('#uploadStatus').innerHTML = '';
+        document.getElementById('excelPreview').querySelector('tbody').innerHTML =
+          '<tr><td colspan="3" class="text-center">上传Excel文件后预览数据</td></tr>';
+        new bootstrap.Modal(document.getElementById('uploadModal')).show();
+      });
+      document.getElementById('processExcelBtn').addEventListener('click', processExcelFile);
+      document.getElementById('filterSummaryBtn').addEventListener('click', filterSummaryData);
+      document.getElementById('clearFilterBtn').addEventListener('click', clearFilters);
+      document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
+      document.getElementById('addWorkerBtn').addEventListener('click', addNewWorker);
+      document.getElementById('clearAllDataBtn').addEventListener('click', clearAllData);
+      document.getElementById('saveReportBtn').addEventListener('click', saveReportChanges);
+      document.getElementById('deleteByDateBtn').addEventListener('click', deleteByDate);
+      document.getElementById('exportAllDataBtn').addEventListener('click', exportAllData);
+      // 新增：手动输入按钮事件 (原料)
+      document.getElementById('toggleMaterialInputBtn').addEventListener('click', toggleManualInput);
+      // 新增：手动输入按钮事件 (设备)
+      document.getElementById('toggleMachineInputBtn').addEventListener('click', toggleManualMachineInput);
+      // 新增：设备选择按钮事件
+      document.getElementById('selectMachineBtn').addEventListener('click', openMachineSelectModal);
+      // 粒重选项选择事件
+      document.getElementById('grainWeightOptions').addEventListener('change', function() {
+        if (this.value) {
+          document.getElementById('grainWeight').value = this.value;
+        }
+      });
+      // 编辑模态框中的粒重选项选择事件
+      document.getElementById('editGrainWeightOptions').addEventListener('change', function() {
+        if (this.value) {
+          document.getElementById('editGrainWeight').value = this.value;
+        }
+      });
+      document.getElementById('summaryTableBody').addEventListener('click', (e) => {
+        if (e.target.classList.contains('edit-report') || e.target.closest('.edit-report')) {
+          const reportId = e.target.closest('.edit-report').dataset.reportId;
+          editReport(reportId);
+        }
+        if (e.target.classList.contains('delete-report') || e.target.closest('.delete-report')) {
+          const reportId = e.target.closest('.delete-report').dataset.reportId;
+          deleteReport(reportId);
+        }
+      });
+      document.getElementById('workersTableBody').addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-worker') || e.target.closest('.delete-worker')) {
+          const workerId = e.target.closest('.delete-worker').dataset.workerId;
+          deleteWorker(workerId);
+        }
+      });
+      document.getElementById('excelFile').addEventListener('change', previewExcel);
+      // 分页按钮事件监听
+      document.getElementById('prevPageBtn').addEventListener('click', goToPrevPage);
+      document.getElementById('nextPageBtn').addEventListener('click', goToNextPage);
+      // 测试数据生成按钮
+      document.getElementById('generateTestDataBtn').addEventListener('click', generateTestData);
+      // 监听报工标签页显示事件，更新生产日期
+      document.getElementById('report-pane').addEventListener('show.bs.tab', function() {
+        document.getElementById('productionDate').valueAsDate = new Date();
+      });
+      // 页面卸载时清除监控
+      window.addEventListener('beforeunload', function() {
+        if (memoryCheckInterval) {
+          clearInterval(memoryCheckInterval);
+        }
+      });
+
+      // --- 新增设备管理事件监听 ---
+      document.getElementById('addMachineBtn').addEventListener('click', addNewMachine);
+      document.getElementById('importMachinesBtn').addEventListener('click', () => {
+        document.getElementById('importMachinesModal').querySelector('#importMachinesStatus').innerHTML = '';
+        document.getElementById('importMachinesPreview').querySelector('tbody').innerHTML =
+          '<tr><td colspan="3" class="text-center">上传Excel文件后预览数据</td></tr>';
+        new bootstrap.Modal(document.getElementById('importMachinesModal')).show();
+      });
+      document.getElementById('processImportMachinesBtn').addEventListener('click', processImportMachinesFile);
+      document.getElementById('importMachinesFile').addEventListener('change', previewImportMachines);
+      document.getElementById('machinesTableBody').addEventListener('click', (e) => {
+        if (e.target.classList.contains('delete-machine') || e.target.closest('.delete-machine')) {
+          const machineId = e.target.closest('.delete-machine').dataset.machineId;
+          deleteMachine(machineId);
+        }
+      });
+      document.getElementById('machineAreaFilter').addEventListener('change', filterMachinesTable);
+
+      // --- 新增设备选择弹窗事件监听 ---
+      document.getElementById('machineSearchInput').addEventListener('input', updateMachineModalList);
+      document.getElementById('closeMachineModalBtn').addEventListener('click', function() {
+          bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide();
+      });
+      document.getElementById('machineSelectList').addEventListener('click', function(e) {
+          const item = e.target.closest('.machine-modal-item');
+          if (item) {
+              const machineId = item.dataset.machineId;
+              selectMachine(machineId);
+              bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide();
+          }
+      });
+    }
+    // 清除筛选条件
+    function clearFilters() {
+      document.getElementById('summaryWorkerId').value = '';
+      document.getElementById('summaryWorkArea').value = '';
+      document.getElementById('summaryOperationType').value = '';
+      document.getElementById('summaryDateFrom').value = '';
+      document.getElementById('summaryDateTo').value = '';
+      filterSummaryData();
+    }
+    // 预览Excel数据
+    function previewExcel() {
+      const fileInput = document.getElementById('excelFile');
+      const file = fileInput.files[0];
+      const statusEl = document.getElementById('uploadStatus');
+      const previewTable = document.getElementById('excelPreview').querySelector('tbody');
+      if (!file) {
+        statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          // 使用sheet_to_json转换数据，处理空白单元格
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+          if (jsonData.length === 0) {
+            previewTable.innerHTML = '<tr><td colspan="3" class="text-center">Excel文件中没有数据</td></tr>';
+            return;
+          }
+          const requiredFields = ['坯布编号', '原料编号', '原料名称'];
+          const header = jsonData[0];
+          const hasRequiredFields = requiredFields.every(field => header.includes(field));
+          if (!hasRequiredFields) {
+            previewTable.innerHTML = `<tr><td colspan="3" class="text-center">Excel文件格式不正确，需要包含列：${requiredFields.join(', ')}</td></tr>`;
+            return;
+          }
+          let html = '';
+          // 只显示前5行预览数据
+          for (let i = 1; i < Math.min(6, jsonData.length); i++) {
+            const row = jsonData[i];
+            html += '<tr>';
+            html += `<td>${row[header.indexOf('坯布编号')] || ''}</td>`;
+            html += `<td>${row[header.indexOf('原料编号')] || ''}</td>`;
+            html += `<td>${row[header.indexOf('原料名称')] || ''}</td>`;
+            html += '</tr>';
+          }
+          if (jsonData.length > 6) {
+            html += `<tr><td colspan="3" class="text-center">...只显示前5行，共${jsonData.length - 1}行数据</td></tr>`;
+          }
+          previewTable.innerHTML = html;
+          statusEl.innerHTML = `<div class="alert alert-success">检测到 ${jsonData.length - 1} 条匹配记录</div>`;
+        } catch (error) {
+          console.error('预览Excel文件出错:', error);
+          previewTable.innerHTML = '<tr><td colspan="3" class="text-center">处理文件时出错，请检查文件格式</td></tr>';
+          statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>';
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    // 确认工号
+    function confirmWorker() {
+      const workerSelect = document.getElementById('workerSelect');
+      const workerId = workerSelect.value;
+      const workArea = document.getElementById('workAreaSelect').value;
+      if (!workerId) {
+        showAlert('请选择员工', 'danger');
+        return;
+      }
+      if (!workArea) {
+        showAlert('请选择作业区域', 'danger');
+        return;
+      }
+      const worker = workers.find(w => w.workerId === workerId);
+      if (!worker) {
+        showAlert('所选员工不存在', 'danger');
+        return;
+      }
+      document.getElementById('workerInfo').style.display = 'block';
+      document.getElementById('workerInfo').innerHTML = `
+        <strong>工号：</strong>${worker.workerId}<br>
+        <strong>姓名：</strong>${worker.name}<br>
+        <strong>作业区域：</strong>${workArea}<br>
+        <span class="text-success">已确认，请填写报工信息</span>
+      `;
+      currentWorkerId = workerId;
+      currentWorkArea = workArea;
+      document.getElementById('currentWorkerId').textContent = worker.workerId;
+      document.getElementById('currentWorkerName').textContent = worker.name;
+      document.getElementById('currentWorkArea').textContent = workArea;
+      reportTab.disabled = false;
+      tabs.show(document.getElementById('report-tab'));
+    }
+    // 添加新员工
+    async function addNewWorker() {
+      const workerId = document.getElementById('newWorkerId').value.trim();
+      const name = document.getElementById('newWorkerName').value.trim();
+      if (!workerId || !name) {
+        showAlert('请输入工号和姓名', 'danger');
+        return;
+      }
+      if (workers.some(w => w.workerId === workerId)) {
+        showAlert(`工号 ${workerId} 已存在`, 'warning');
+        return;
+      }
+      const newWorker = { workerId, name };
+      workers.push(newWorker);
+      try {
+        const transaction = db.transaction([WORKERS_STORE], 'readwrite');
+        const store = transaction.objectStore(WORKERS_STORE);
+        store.add(newWorker);
+        document.getElementById('newWorkerId').value = '';
+        document.getElementById('newWorkerName').value = '';
+        updateWorkersTable();
+        updateWorkerSelect();
+        updateWorkerStats();
+        updateMemoryUsage();
+        showAlert(`成功添加员工：${name} (${workerId})`, 'success');
+      } catch (error) {
+        console.error('添加员工失败:', error);
+        showAlert('添加员工失败，请重试', 'danger');
+      }
+    }
+    // 更新员工统计信息
+    function updateWorkerStats() {
+      document.getElementById('totalWorkersCount').textContent = workers.length;
+      // 计算活跃员工（最近30天有报工记录的员工）
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      const activeWorkers = new Set();
+      reports.forEach(report => {
+        const reportDate = new Date(report.timestamp);
+        if (reportDate > thirtyDaysAgo) {
+          activeWorkers.add(report.workerId);
+        }
+      });
+      document.getElementById('activeWorkersCount').textContent = activeWorkers.size;
+      // 计算人均报工数
+      const avgReports = workers.length > 0 ? (reports.length / workers.length).toFixed(1) : 0;
+      document.getElementById('avgReports').textContent = avgReports;
+    }
+    // 登出
+    function logout() {
+      currentWorkerId = '';
+      currentWorkArea = '';
+      document.getElementById('workerInfo').style.display = 'none';
+      document.getElementById('reportForm').reset();
+      resetReportForm();
+      reportTab.disabled = true;
+      tabs.show(document.getElementById('login-tab'));
+    }
+    // 重置报工表单
+    function resetReportForm() {
+      document.getElementById('reportForm').reset();
+      document.getElementById('productionDate').valueAsDate = new Date();
+      document.getElementById('matchResult').style.display = 'none';
+      document.getElementById('materialCode').value = '';
+      document.getElementById('materialName').value = '';
+      // 重置手动输入状态 (原料)
+      if (manualInputEnabled) {
+        toggleManualInput();
+      }
+      // 重置手动输入状态 (设备)
+      if (manualMachineInputEnabled) {
+        toggleManualMachineInput();
+      }
+      // 重置设备选择
+      document.getElementById('machineId').value = '';
+    }
+    // 切换手动输入状态 (原料)
+    function toggleManualInput() {
+      const materialCodeInput = document.getElementById('materialCode');
+      const materialNameInput = document.getElementById('materialName');
+      const button = document.getElementById('toggleMaterialInputBtn');
+      manualInputEnabled = !manualInputEnabled;
+      materialCodeInput.readOnly = !manualInputEnabled;
+      materialNameInput.readOnly = !manualInputEnabled;
+      if (manualInputEnabled) {
+        button.innerHTML = '<i class="fas fa-times"></i>';
+        button.classList.remove('btn-outline-secondary');
+        button.classList.add('btn-warning');
+        document.getElementById('matchResult').innerHTML = `
+          <div class="alert alert-info">
+            <i class="fas fa-info-circle me-2"></i>
+            已启用手动输入模式，请直接输入原料编号和名称
+          </div>
+        `;
+        document.getElementById('matchResult').style.display = 'block';
+      } else {
+        button.innerHTML = '<i class="fas fa-pencil-alt"></i>';
+        button.classList.remove('btn-warning');
+        button.classList.add('btn-outline-secondary');
+        document.getElementById('matchResult').style.display = 'none';
+      }
+    }
+    // 切换手动输入状态 (设备)
+    function toggleManualMachineInput() {
+        const machineInput = document.getElementById('machineId');
+        const selectBtn = document.getElementById('selectMachineBtn');
+        const toggleBtn = document.getElementById('toggleMachineInputBtn');
+        manualMachineInputEnabled = !manualMachineInputEnabled;
+        machineInput.readOnly = !manualMachineInputEnabled;
+        selectBtn.disabled = manualMachineInputEnabled;
+
+        if (manualMachineInputEnabled) {
+            toggleBtn.innerHTML = '<i class="fas fa-list"></i>';
+            toggleBtn.title = '切换回选择列表';
+            machineInput.placeholder = "请输入设备编号";
+        } else {
+            toggleBtn.innerHTML = '<i class="fas fa-keyboard"></i>';
+            toggleBtn.title = "切换手动输入";
+            machineInput.placeholder = "请输入或选择设备编号";
+        }
+    }
+    // 原料匹配逻辑
+    function handleMatch() {
+      const greyClothId = document.getElementById('greyClothId').value.trim();
+      const matchResult = document.getElementById('matchResult');
+      matchResult.innerHTML = '';
+      if (!greyClothId || !materialMatches.length) {
+        matchResult.style.display = 'none';
+        return;
+      }
+      const matches = materialMatches.filter(item =>
+        item['坯布编号']?.toString().includes(greyClothId)
+      );
+      if (matches.length === 0) {
+        matchResult.style.display = 'block';
+        matchResult.innerHTML = `
+          <div class="alert alert-warning">
+            <p>未找到匹配的坯布编号</p>
+            <button class="btn btn-sm btn-info mt-2" id="enableManualBtn">
+              <i class="fas fa-pencil-alt me-1"></i>手动输入原料信息
+            </button>
+          </div>
+        `;
+        document.getElementById('enableManualBtn').addEventListener('click', () => {
+          if (!manualInputEnabled) {
+            toggleManualInput();
+          }
+        });
+        return;
+      }
+      matchResult.style.display = 'block';
+      if (matches.length === 1) {
+        const match = matches[0];
+        document.getElementById('materialCode').value = match['原料编号'] || '';
+        document.getElementById('materialName').value = match['原料名称'] || '';
+        matchResult.innerHTML = `
+          <div class="alert alert-success">
+            <p><strong>已匹配到原料信息：</strong></p>
+            <p>坯布编号: ${match['坯布编号'] || ''}</p>
+            <p>原料编号: ${match['原料编号'] || ''}</p>
+            <p>原料名称: ${match['原料名称'] || ''}</p>
+            <button class="btn btn-sm btn-outline-secondary mt-2" id="manualOverrideBtn">
+              <i class="fas fa-pencil-alt me-1"></i>手动修改原料信息
+            </button>
+          </div>
+        `;
+        document.getElementById('manualOverrideBtn').addEventListener('click', () => {
+          if (!manualInputEnabled) {
+            toggleManualInput();
+          }
+        });
+      } else {
+        let tableHTML = `
+          <div class="alert alert-info">找到 ${matches.length} 条匹配记录，请选择</div>
+          <table class="table table-bordered">
+            <tr>
+              <th>选择</th>
+              <th>坯布编号</th>
+              <th>原料编号</th>
+              <th>原料名称</th>
+            </tr>
+        `;
+        matches.forEach((m, i) => {
+          tableHTML += `
+            <tr>
+              <td><button class="btn btn-sm btn-primary select-match" data-index="${i}">选择</button></td>
+              <td>${m['坯布编号']}</td>
+              <td>${m['原料编号']}</td>
+              <td>${m['原料名称']}</td>
+            </tr>
+          `;
+        });
+        tableHTML += `
+          <tr>
+            <td colspan="4" class="text-center">
+              <button class="btn btn-sm btn-outline-info mt-2" id="manualInputOptionBtn">
+                <i class="fas fa-pencil-alt me-1"></i>手动输入原料信息
+              </button>
+            </td>
+          </tr>
+        </table>`;
+        matchResult.innerHTML = tableHTML;
+        document.querySelectorAll('.select-match').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const m = matches[btn.dataset.index];
+            document.getElementById('materialCode').value = m['原料编号'] || '';
+            document.getElementById('materialName').value = m['原料名称'] || '';
+            matchResult.innerHTML = `
+              <div class="alert alert-success">
+                <p><strong>已选择原料信息：</strong></p>
+                <p>坯布编号: ${m['坯布编号'] || ''}</p>
+                <p>原料编号: ${m['原料编号'] || ''}</p>
+                <p>原料名称: ${m['原料名称'] || ''}</p>
+                <button class="btn btn-sm btn-outline-secondary mt-2" id="manualOverrideBtn">
+                  <i class="fas fa-pencil-alt me-1"></i>手动修改原料信息
+                </button>
+              </div>
+            `;
+            document.getElementById('manualOverrideBtn').addEventListener('click', () => {
+              if (!manualInputEnabled) {
+                toggleManualInput();
+              }
+            });
+          });
+        });
+        document.getElementById('manualInputOptionBtn').addEventListener('click', () => {
+          if (!manualInputEnabled) {
+            toggleManualInput();
+          }
+        });
+      }
+    }
+    // 处理坯布编号输入 - 优化版（使用防抖）
+    function handleGreyClothInput() {
+      clearTimeout(debounceTimer);
+      const inputValue = greyClothIdInput.value.trim();
+      // 清空之前的建议
+      greyClothSuggestions.innerHTML = '';
+      greyClothSuggestions.style.display = 'none';
+      // 如果输入长度小于2，不显示建议
+      if (inputValue.length < 2) {
+        return;
+      }
+      // 防抖处理，300毫秒后执行
+      debounceTimer = setTimeout(() => {
+        // 使用Set去重
+        const uniqueSuggestions = new Set();
+        materialMatches.forEach(item => {
+          const clothNum = item['坯布编号']?.toString() || '';
+          // 检查坯布编号是否包含输入值（不区分位置）
+          if (clothNum.includes(inputValue)) {
+            uniqueSuggestions.add(clothNum);
+          }
+        });
+        // 如果没有匹配项，不显示
+        if (uniqueSuggestions.size === 0) {
+          return;
+        }
+        // 创建建议列表
+        let html = '';
+        uniqueSuggestions.forEach(suggestion => {
+          // 高亮匹配部分
+          const matchIndex = suggestion.indexOf(inputValue);
+          if (matchIndex !== -1) {
+            const before = suggestion.substring(0, matchIndex);
+            const match = suggestion.substring(matchIndex, matchIndex + inputValue.length);
+            const after = suggestion.substring(matchIndex + inputValue.length);
+            html += `<a class="dropdown-item" href="#">${before}<span class="suggestion-highlight">${match}</span>${after}</a>`;
+          } else {
+            html += `<a class="dropdown-item" href="#">${suggestion}</a>`;
+          }
+        });
+        greyClothSuggestions.innerHTML = html;
+        greyClothSuggestions.style.display = 'block';
+        // 添加点击事件
+        greyClothSuggestions.querySelectorAll('.dropdown-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+            // 提取文本内容（去除高亮标记）
+            const text = item.textContent;
+            greyClothIdInput.value = text;
+            greyClothSuggestions.innerHTML = '';
+            greyClothSuggestions.style.display = 'none';
+            handleMatch();
+          });
+        });
+      }, 300);
+    }
+    // 提交报工
+    async function handleSubmit(e) {
+      e.preventDefault();
+      const reportId = Date.now().toString();
+      const worker = workers.find(w => w.workerId === currentWorkerId);
+      const workerName = worker ? worker.name : '未知';
+      const machineId = document.getElementById('machineId').value.trim();
+      // 验证设备编号
+      if (!machineId) {
+        showAlert('请输入或选择设备编号', 'danger');
+        return;
+      }
+      // 获取粒数和粒重
+      const grainCount = parseInt(document.getElementById('grainCount').value);
+      const grainWeight = parseFloat(document.getElementById('grainWeight').value);
+      // 验证粒数和粒重
+      if (isNaN(grainCount) || grainCount < 1 || grainCount > 300) {
+        showAlert('粒数必须在1到300之间', 'danger');
+        return;
+      }
+      if (isNaN(grainWeight) || grainWeight <= 0 || grainWeight > 15) {
+        showAlert('粒重必须在0到15之间', 'danger');
+        return;
+      }
+      // 计算总重量
+      const totalWeight = grainCount * grainWeight;
+      const report = {
+        reportId,
+        workerId: currentWorkerId,
+        workerName,
+        workArea: currentWorkArea,
+        machineId: machineId,
+        greyClothId: document.getElementById('greyClothId').value.trim(),
+        operationType: document.getElementById('operationType').value,
+        materialCode: document.getElementById('materialCode').value.trim(),
+        materialName: document.getElementById('materialName').value.trim(),
+        grainCount: grainCount,
+        grainWeight: grainWeight,
+        totalWeight: totalWeight,
+        productionDate: document.getElementById('productionDate').value,
+        remarks: document.getElementById('remarks').value.trim(),
+        timestamp: new Date().getTime()
+      };
+      // 检查所有必填字段
+      if (!report.machineId || !report.greyClothId ||
+          isNaN(report.grainWeight) || !report.productionDate || !report.materialCode || !report.materialName) {
+        showAlert('请填写完整信息', 'danger');
+        return;
+      }
+      try {
+        // 保存到数据库
+        const transaction = db.transaction([REPORTS_STORE], 'readwrite');
+        const store = transaction.objectStore(REPORTS_STORE);
+        store.add(report);
+        // 更新本地数据（添加到最前面）
+        reports.unshift(report);
+        showAlert('报工提交成功！', 'success');
+        resetReportForm();
+        // 自动更新汇总界面
+        filterSummaryData();
+        updateWorkerStats();
+        updateMemoryUsage();
+        tabs.show(document.getElementById('summary-tab'));
+      } catch (error) {
+        console.error('保存报工记录失败:', error);
+        showAlert('提交失败，请重试', 'danger');
+      }
+    }
+    // 处理Excel文件
+    function processExcelFile() {
+      const fileInput = document.getElementById('excelFile');
+      const file = fileInput.files[0];
+      const statusEl = document.getElementById('uploadStatus');
+      if (!file) {
+        statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          // 使用defval选项处理空白单元格，默认为空字符串
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+          if (jsonData.length === 0) {
+            statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>';
+            return;
+          }
+          const requiredFields = ['坯布编号', '原料编号', '原料名称'];
+          const hasRequiredFields = requiredFields.every(field =>
+            Object.keys(jsonData[0]).includes(field)
+          );
+          if (!hasRequiredFields) {
+            statusEl.innerHTML = '<div class="alert alert-danger">Excel文件格式不正确，需要包含列：坯布编号, 原料编号, 原料名称</div>';
+            return;
+          }
+          // 只保留必要字段
+          const processedData = jsonData.map(item => ({
+            '坯布编号': item['坯布编号'] || '',
+            '原料编号': item['原料编号'] || '',
+            '原料名称': item['原料名称'] || ''
+          }));
+          // 保存到localStorage
+          materialMatches = processedData;
+          localStorage.setItem('materialMatches', JSON.stringify(processedData));
+          statusEl.innerHTML = '<div class="alert alert-success">原料匹配表更新成功</div>';
+          new bootstrap.Modal(document.getElementById('uploadModal')).hide();
+          updateMemoryUsage();
+        } catch (error) {
+          console.error('处理Excel文件出错:', error);
+          statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>';
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+    // 筛选报工汇总数据
+    function filterSummaryData() {
+      const workerId = document.getElementById('summaryWorkerId').value;
+      const workArea = document.getElementById('summaryWorkArea').value;
+      const operationType = document.getElementById('summaryOperationType').value;
+      const dateFrom = document.getElementById('summaryDateFrom').value;
+      const dateTo = document.getElementById('summaryDateTo').value;
+      filteredReports = reports.filter(report => {
+        const isWorkerMatch = workerId === '' || report.workerId === workerId;
+        const isWorkAreaMatch = workArea === '' || report.workArea === workArea;
+        const isOperationTypeMatch = operationType === '' || report.operationType === operationType;
+        const isDateMatch = (dateFrom === '' || report.productionDate >= dateFrom) && (dateTo === '' || report.productionDate <= dateTo);
+        return isWorkerMatch && isWorkAreaMatch && isOperationTypeMatch && isDateMatch;
+      });
+      // 重置到第一页
+      currentPage = 1;
+      updateSummaryTable();
+      updateSummaryStats();
+    }
+    // 导出Excel文件 - 修复版（处理大数据量）
+    async function exportToExcel() {
+      // 显示导出进度模态框
+      const progressModal = new bootstrap.Modal(document.getElementById('exportProgressModal'));
+      progressModal.show();
+      const progressBar = document.getElementById('exportProgressBar');
+      const progressText = document.getElementById('exportProgressText');
+      const statusEl = document.getElementById('exportStatus');
+      // 重置进度条
+      progressBar.style.width = '0%';
+      progressText.textContent = '0%';
+      statusEl.innerHTML = '<div class="alert alert-info">开始导出...</div>';
+      try {
+        // 创建工作簿
+        const wb = XLSX.utils.book_new();
+        // 分批处理（每批1万条）
+        const batchSize = 10000;
+        const batchCount = Math.ceil(filteredReports.length / batchSize);
+        // 如果数据量小于等于一个批次，直接处理
+        if (filteredReports.length <= batchSize) {
+          const ws = XLSX.utils.json_to_sheet(filteredReports);
+          XLSX.utils.book_append_sheet(wb, ws, '报工数据');
+          // 更新进度
+          progressBar.style.width = '100%';
+          progressText.textContent = '100%';
+          statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>';
+          setTimeout(() => {
+            XLSX.writeFile(wb, '报工数据.xlsx');
+            statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>';
+          }, 500);
+          return;
+        }
+        // 处理大数据量（分批处理）
+        statusEl.innerHTML = `<div class="alert alert-info">正在处理大量数据（${filteredReports.length}条），请稍候...</div>`;
+        // 使用延迟循环处理每个批次
+        const processBatch = async (batchIndex) => {
+          const start = batchIndex * batchSize;
+          const end = Math.min(start + batchSize, filteredReports.length);
+          const batchData = filteredReports.slice(start, end);
+          const ws = XLSX.utils.json_to_sheet(batchData);
+          // 为每个批次创建单独的工作表（确保工作表名称唯一）
+          const sheetName = `报工数据${batchIndex + 1}`;
+          XLSX.utils.book_append_sheet(wb, ws, sheetName);
+          // 更新进度
+          const progress = Math.round(((batchIndex + 1) / batchCount) * 100);
+          progressBar.style.width = `${progress}%`;
+          progressText.textContent = `${progress}%`;
+          // 如果还有更多批次，继续处理（使用setTimeout避免阻塞UI）
+          if (batchIndex < batchCount - 1) {
+            await new Promise(resolve => setTimeout(resolve, 0));
+            await processBatch(batchIndex + 1);
+          }
+        };
+        // 开始处理批次
+        await processBatch(0);
+        statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>';
+        // 延迟生成文件，确保进度条更新
+        setTimeout(() => {
+          XLSX.writeFile(wb, '报工数据.xlsx');
+          statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>';
+        }, 500);
+      } catch (error) {
+        console.error('导出Excel失败:', error);
+        statusEl.innerHTML = `<div class="alert alert-danger">导出失败: ${error.message}</div>`;
+      }
+    }
+    // 更新员工表格
+    function updateWorkersTable() {
+      const tableBody = document.getElementById('workersTableBody');
+      tableBody.innerHTML = '';
+      workers.forEach((worker, index) => {
+        const row = document.createElement('tr');
+        const workerReports = reports.filter(report => report.workerId === worker.workerId);
+        const reportCount = workerReports.length;
+        // 查找最近报工日期
+        let lastReportDate = '无记录';
+        if (reportCount > 0) {
+          const dates = workerReports.map(r => r.timestamp);
+          const maxDate = new Date(Math.max(...dates));
+          lastReportDate = maxDate.toISOString().split('T')[0];
+        }
+        row.innerHTML = `
+          <td>${index + 1}</td>
+          <td>${worker.workerId}</td>
+          <td>${worker.name}</td>
+          <td>${reportCount}</td>
+          <td>${lastReportDate}</td>
+          <td>
+            <button class="btn btn-sm btn-danger delete-worker" data-worker-id="${worker.workerId}">
+              <i class="fas fa-trash-alt"></i> 删除
+            </button>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+      if (workers.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暂无员工数据</td></tr>';
+      }
+    }
+    // 删除员工（保留报工数据）
+    async function deleteWorker(workerId) {
+      if (confirm('确定要删除该员工吗？报工数据将保留。')) {
+        try {
+          // 从数据库中删除
+          const transaction = db.transaction([WORKERS_STORE], 'readwrite');
+          const store = transaction.objectStore(WORKERS_STORE);
+          store.delete(workerId);
+          // 从本地数据中删除
+          workers = workers.filter(w => w.workerId !== workerId);
+          updateWorkersTable();
+          updateWorkerSelect();
+          updateWorkerStats();
+          updateSummaryStats();
+          updateMemoryUsage();
+          showAlert('员工已删除，报工数据保留', 'success');
+        } catch (error) {
+          console.error('删除员工失败:', error);
+          showAlert('删除员工失败，请重试', 'danger');
+        }
+      }
+    }
+    // 更新报工汇总表格（带分页功能）
+    function updateSummaryTable() {
+      const tableBody = document.getElementById('summaryTableBody');
+      tableBody.innerHTML = '';
+      // 计算总页数
+      const totalRecords = filteredReports.length;
+      const totalPages = Math.ceil(totalRecords / itemsPerPage);
+      // 更新分页信息
+      document.getElementById('totalRecords').textContent = totalRecords;
+      document.getElementById('totalPages').textContent = totalPages;
+      document.getElementById('currentPage').textContent = currentPage;
+      // 启用/禁用分页按钮
+      document.getElementById('prevPageBtn').disabled = currentPage === 1;
+      document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0;
+      if (totalRecords === 0) {
+        tableBody.innerHTML = '<tr><td colspan="13" class="text-center">暂无数据</td></tr>';
+        return;
+      }
+      // 计算当前页数据的起始索引
+      const startIndex = (currentPage - 1) * itemsPerPage;
+      const endIndex = Math.min(startIndex + itemsPerPage, totalRecords);
+      const currentPageData = filteredReports.slice(startIndex, endIndex);
+      // 生成表格行
+      currentPageData.forEach((report, index) => {
+        const row = document.createElement('tr');
+        const workerExists = workers.some(w => w.workerId === report.workerId);
+        const globalIndex = startIndex + index + 1;
+        // 如果员工已被删除，添加特殊样式
+        if (!workerExists) {
+          row.classList.add('deleted-worker');
+        }
+        row.innerHTML = `
+          <td>${globalIndex}</td>
+          <td>${report.workerId}</td>
+          <td>${report.workerName}</td>
+          <td>${report.workArea}</td>
+          <td>${report.machineId}</td>
+          <td>${report.greyClothId}</td>
+          <td>${report.materialName}</td>
+          <td>${report.operationType}</td>
+          <td>${report.grainCount}</td>
+          <td>${report.grainWeight}</td>
+          <td>${report.totalWeight.toFixed(1)}</td>
+          <td>${report.productionDate}</td>
+          <td>
+            <div class="action-buttons">
+              <button class="btn btn-sm btn-info edit-report" data-report-id="${report.reportId}">
+                <i class="fas fa-edit"></i>
+              </button>
+              <button class="btn btn-sm btn-danger delete-report" data-report-id="${report.reportId}">
+                <i class="fas fa-trash-alt"></i>
+              </button>
+            </div>
+          </td>
+        `;
+        tableBody.appendChild(row);
+      });
+    }
+    // 上一页
+    function goToPrevPage() {
+      if (currentPage > 1) {
+        currentPage--;
+        updateSummaryTable();
+      }
+    }
+    // 下一页
+    function goToNextPage() {
+      const totalPages = Math.ceil(filteredReports.length / itemsPerPage);
+      if (currentPage < totalPages) {
+        currentPage++;
+        updateSummaryTable();
+      }
+    }
+    // 编辑报工记录
+    function editReport(reportId) {
+      const report = reports.find(r => r.reportId === reportId);
+      if (!report) return;
+      // 填充表单
+      document.getElementById('editReportId').value = report.reportId;
+      document.getElementById('editWorkerId').value = report.workerId;
+      document.getElementById('editWorkerName').value = report.workerName;
+      document.getElementById('editWorkArea').value = report.workArea;
+      document.getElementById('editMachineId').value = report.machineId;
+      document.getElementById('editGreyClothId').value = report.greyClothId;
+      document.getElementById('editMaterialName').value = report.materialName;
+      document.getElementById('editOperationType').value = report.operationType;
+      document.getElementById('editGrainCount').value = report.grainCount;
+      document.getElementById('editGrainWeight').value = report.grainWeight;
+      document.getElementById('editProductionDate').value = report.productionDate;
+      // 显示模态框
+      new bootstrap.Modal(document.getElementById('editReportModal')).show();
+    }
+    // 保存报工记录修改
+    async function saveReportChanges() {
+      const reportId = document.getElementById('editReportId').value;
+      const report = reports.find(r => r.reportId === reportId);
+      if (!report) return;
+      // 获取粒数和粒重
+      const grainCount = parseInt(document.getElementById('editGrainCount').value);
+      const grainWeight = parseFloat(document.getElementById('editGrainWeight').value);
+      // 验证粒数和粒重
+      if (isNaN(grainCount) || grainCount < 1 || grainCount > 300) {
+        showAlert('粒数必须在1到300之间', 'danger');
+        return;
+      }
+      if (isNaN(grainWeight) || grainWeight <= 0 || grainWeight > 15) {
+        showAlert('粒重必须在0到15之间', 'danger');
+        return;
+      }
+      // 更新报工记录
+      report.machineId = document.getElementById('editMachineId').value;
+      report.greyClothId = document.getElementById('editGreyClothId').value;
+      report.materialName = document.getElementById('editMaterialName').value;
+      report.operationType = document.getElementById('editOperationType').value;
+      report.grainCount = grainCount;
+      report.grainWeight = grainWeight;
+      report.totalWeight = grainCount * grainWeight;
+      report.productionDate = document.getElementById('editProductionDate').value;
+      try {
+        // 更新数据库
+        const transaction = db.transaction([REPORTS_STORE], 'readwrite');
+        const store = transaction.objectStore(REPORTS_STORE);
+        store.put(report);
+        updateSummaryStats();
+        updateWorkerStats();
+        updateMemoryUsage();
+        new bootstrap.Modal(document.getElementById('editReportModal')).hide();
+        showAlert('报工记录修改成功', 'success');
+      } catch (error) {
+        console.error('更新报工记录失败:', error);
+        showAlert('更新失败，请重试', 'danger');
+      }
+    }
+    // 删除报工记录
+    async function deleteReport(reportId) {
+      if (confirm('确定要删除此报工记录吗？')) {
+        try {
+          // 从数据库中删除
+          const transaction = db.transaction([REPORTS_STORE], 'readwrite');
+          const store = transaction.objectStore(REPORTS_STORE);
+          store.delete(reportId);
+          // 更新本地数据
+          reports = reports.filter(r => r.reportId !== reportId);
+          filteredReports = filteredReports.filter(r => r.reportId !== reportId);
+          updateSummaryStats();
+          updateWorkerStats();
+          updateMemoryUsage();
+          showAlert('报工记录已删除', 'success');
+        } catch (error) {
+          console.error('删除报工记录失败:', error);
+          showAlert('删除失败，请重试', 'danger');
+        }
+      }
+    }
+    // 按日期删除数据
+    async function deleteByDate() {
+      const dateFrom = document.getElementById('deleteDateFrom').value;
+      const dateTo = document.getElementById('deleteDateTo').value;
+      if (!dateFrom || !dateTo) {
+        showAlert('请选择开始和结束日期', 'warning');
+        return;
+      }
+      if (confirm(`确定要删除${dateFrom}至${dateTo}的所有报工记录吗？`)) {
+        try {
+          showLoading();
+          // 从本地数据中删除
+          const initialCount = reports.length;
+          reports = reports.filter(report =>
+            report.productionDate < dateFrom || report.productionDate > dateTo
+          );
+          const deletedCount = initialCount - reports.length;
+          // 更新数据库
+          await saveDataToDB(REPORTS_STORE, reports);
+          updateSummaryStats();
+          updateWorkerStats();
+          updateMemoryUsage();
+          showAlert(`已删除${deletedCount}条报工记录`, 'success');
+          hideLoading();
+        } catch (error) {
+          console.error('按日期删除数据失败:', error);
+          showAlert('删除数据失败，请重试', 'danger');
+          hideLoading();
+        }
+      }
+    }
+    // 更新报工汇总统计信息
+    function updateSummaryStats() {
+      const totalReports = reports.length;
+      const totalGrains = reports.reduce((sum, report) => sum + report.grainCount, 0);
+      const totalWorkers = new Set(reports.map(report => report.workerId)).size;
+      const totalWeight = reports.reduce((sum, report) => sum + report.totalWeight, 0).toFixed(1);
+      document.getElementById('totalReports').textContent = totalReports;
+      document.getElementById('totalGrains').textContent = totalGrains;
+      document.getElementById('totalWorkers').textContent = totalWorkers;
+      document.getElementById('totalWeight').textContent = totalWeight;
+      updateSummaryTable();
+      updateOperationTypeChart();
+      updateWorkerRankingChart();
+      // 更新筛选下拉框
+      const summaryWorkerId = document.getElementById('summaryWorkerId');
+      summaryWorkerId.innerHTML = '<option value="">全部工号</option>';
+      // 获取所有有报工记录的员工
+      const uniqueWorkerIds = [...new Set(reports.map(report => report.workerId))];
+      uniqueWorkerIds.forEach(id => {
+        const report = reports.find(r => r.workerId === id);
+        const option = document.createElement('option');
+        option.value = id;
+        option.textContent = `${id} - ${report ? report.workerName : '未知'}`;
+        summaryWorkerId.appendChild(option);
+      });
+    }
+    // 更新报工类型分布图表
+    function updateOperationTypeChart() {
+      const operationTypeCounts = {
+        '上纱': 0,
+        '下纱': 0
+      };
+      reports.forEach(report => {
+        operationTypeCounts[report.operationType]++;
+      });
+      const labels = Object.keys(operationTypeCounts);
+      const data = Object.values(operationTypeCounts);
+      if (typeChartInstance) {
+        typeChartInstance.destroy();
+      }
+      const ctx = document.getElementById('operationTypeChart').getContext('2d');
+      typeChartInstance = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: data,
+            backgroundColor: ['#2c6fbb', '#6c757d'],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  const label = context.label || '';
+                  const value = context.raw || 0;
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((value / total) * 100);
+                  return `${label}: ${value} (${percentage}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+    // 更新员工报工量排名图表
+    function updateWorkerRankingChart() {
+      const workerReportCounts = {};
+      reports.forEach(report => {
+        if (!workerReportCounts[report.workerId]) {
+          workerReportCounts[report.workerId] = {
+            name: report.workerName,
+            count: 0
+          };
+        }
+        workerReportCounts[report.workerId].count++;
+      });
+      const sortedWorkers = Object.values(workerReportCounts).sort((a, b) => b.count - a.count).slice(0, 7);
+      const labels = sortedWorkers.map(worker => worker.name);
+      const data = sortedWorkers.map(worker => worker.count);
+      if (rankingChartInstance) {
+        rankingChartInstance.destroy();
+      }
+      const ctx = document.getElementById('workerRankingChart').getContext('2d');
+      rankingChartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '报工次数',
+            data: data,
+            backgroundColor: '#2c6fbb',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: '报工次数'
+              }
+            },
+            x: {
+              title: {
+                display: true,
+                text: '员工姓名'
+              }
+            }
+          }
+        }
+      });
+    }
+    // 清空所有数据
+    async function clearAllData() {
+      if (confirm('确定要清空所有数据吗？此操作不可恢复！')) {
+        try {
+          showLoading();
+          // 清空数据库
+          await saveDataToDB(WORKERS_STORE, []);
+          await saveDataToDB(REPORTS_STORE, []);
+          await saveDataToDB(MACHINES_STORE, []); // 清空设备数据
+          // 清空localStorage中的匹配表
+          localStorage.removeItem('materialMatches');
+          // 清空本地数据
+          workers = [];
+          reports = [];
+          materialMatches = [];
+          machines = []; // 清空设备数据
+          filteredReports = [];
+          // 重置分页
+          currentPage = 1;
+          updateWorkersTable();
+          updateWorkerStats();
+          updateSummaryStats();
+          updateMachinesTable(); // 更新设备表格
+          updateMachineStats(); // 更新设备统计
+          updateMemoryUsage();
+          showAlert('所有数据已清空', 'success');
+          hideLoading();
+        } catch (error) {
+          console.error('清空数据失败:', error);
+          showAlert('清空数据失败，请重试', 'danger');
+          hideLoading();
+        }
+      }
+    }
+    // 导出所有数据
+    function exportAllData() {
+      // 创建工作簿
+      const wb = XLSX.utils.book_new();
+      // 添加workers工作表
+      const ws1 = XLSX.utils.json_to_sheet(workers);
+      XLSX.utils.book_append_sheet(wb, ws1, '员工数据');
+      // 添加reports工作表
+      const ws2 = XLSX.utils.json_to_sheet(reports);
+      XLSX.utils.book_append_sheet(wb, ws2, '报工记录');
+      // 添加materialMatches工作表
+      const ws3 = XLSX.utils.json_to_sheet(materialMatches);
+      XLSX.utils.book_append_sheet(wb, ws3, '原料匹配表');
+      // 添加machines工作表
+      const ws4 = XLSX.utils.json_to_sheet(machines);
+      XLSX.utils.book_append_sheet(wb, ws4, '设备数据');
+      // 导出文件
+      XLSX.writeFile(wb, '报工系统备份_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+      showAlert('所有数据已导出', 'success');
+    }
+    // 生成测试数据
+    async function generateTestData() {
+      const countInput = document.getElementById('testDataCount');
+      const count = parseInt(countInput.value);
+      const dateRange = parseInt(document.getElementById('testDataDateRange').value);
+      if (isNaN(count) || count <= 0 || count > 100000) {
+        document.getElementById('testDataStatus').innerHTML = '<div class="alert alert-danger">请输入有效的记录数量（1-100000）</div>';
+        return;
+      }
+      const statusEl = document.getElementById('testDataStatus');
+      const progressBar = document.getElementById('testDataProgress');
+      const progressText = document.getElementById('testProgressText');
+      const generateBtn = document.getElementById('generateTestDataBtn');
+      statusEl.innerHTML = '<div class="alert alert-info">正在生成测试数据，请稍候...</div>';
+      progressBar.style.width = '0%';
+      progressText.textContent = '0%';
+      // 禁用按钮防止重复点击
+      generateBtn.disabled = true;
+      generateBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>生成中...';
+      try {
+        // 生成测试数据
+        const testReports = await generateTestReports(count, dateRange);
+        // 保存到数据库
+        const transaction = db.transaction([REPORTS_STORE], 'readwrite');
+        const store = transaction.objectStore(REPORTS_STORE);
+        let addedCount = 0;
+        const batchSize = 1000; // 每次批量处理的记录数
+        const totalBatches = Math.ceil(testReports.length / batchSize);
+        // 批量处理数据
+        for (let batch = 0; batch < totalBatches; batch++) {
+          const batchStart = batch * batchSize;
+          const batchEnd = Math.min(batchStart + batchSize, testReports.length);
+          const batchData = testReports.slice(batchStart, batchEnd);
+          // 使用Promise等待当前批次完成
+          await new Promise((resolve, reject) => {
+            let batchCount = 0;
+            batchData.forEach(report => {
+              const request = store.add(report);
+              request.onsuccess = () => {
+                addedCount++;
+                batchCount++;
+                // 每100条更新一次进度
+                if (addedCount % 100 === 0) {
+                  const progress = Math.floor((addedCount / testReports.length) * 100);
+                  progressBar.style.width = `${progress}%`;
+                  progressText.textContent = `${progress}%`;
+                }
+                if (batchCount === batchData.length) {
+                  resolve();
+                }
+              };
+              request.onerror = (event) => {
+                console.error(`添加测试数据失败:`, event.target.error);
+                reject(event.target.error);
+              };
+            });
+          });
+        }
+        // 更新本地数据
+        reports = [...testReports, ...reports]; // 将新数据放在前面
+        // 按时间戳倒序排序
+        reports.sort((a, b) => b.timestamp - a.timestamp);
+        filteredReports = [...reports];
+        // 更新统计信息
+        updateSummaryStats();
+        updateWorkerStats();
+        updateMemoryUsage();
+        statusEl.innerHTML = `<div class="alert alert-success">成功生成 ${addedCount} 条测试数据</div>`;
+        progressBar.style.width = '100%';
+        progressText.textContent = '100%';
+      } catch (error) {
+        console.error('生成测试数据失败:', error);
+        statusEl.innerHTML = '<div class="alert alert-danger">生成测试数据失败</div>';
+      } finally {
+        // 重新启用按钮
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = '<i class="fas fa-bolt me-2"></i>生成测试数据';
+      }
+    }
+    // 生成测试报工记录
+    function generateTestReports(count, dateRange) {
+      return new Promise((resolve) => {
+        const testReports = [];
+        // 生成测试数据所需的基本信息
+        const workAreas = ['10车间', '纬编百兴G1-4楼', '纬编百兴G1-5楼', '纬编百兴G2-1楼', '纬编百兴G2-2楼', '纬编百兴G2-4楼', '纬编百兴G2-5楼'];
+        const operationTypes = ['上纱', '下纱'];
+        const materialNames = ['棉纱', '涤纶', '尼龙', '麻纱', '混纺纱', '天丝', '莫代尔', '竹纤维'];
+        // 如果没有员工数据，则创建一些测试员工
+        if (workers.length === 0) {
+          for (let i = 1; i <= 10; i++) {
+            workers.push({
+              workerId: `2101${i.toString().padStart(3, '0')}`,
+              name: `测试员工${i}`
+            });
+          }
+          // 更新员工下拉框和员工表格
+          updateWorkerSelect();
+          updateWorkersTable();
+          updateWorkerStats();
+        }
+        // 生成count条记录
+        for (let i = 0; i < count; i++) {
+          // 随机选择一个员工
+          const worker = workers[Math.floor(Math.random() * workers.length)];
+          const workArea = workAreas[Math.floor(Math.random() * workAreas.length)];
+          const machineId = `W${Math.floor(Math.random() * 1000).toString().padStart(3, '0')}`;
+          const greyClothId = `GC${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`;
+          const materialName = materialNames[Math.floor(Math.random() * materialNames.length)];
+          const materialCode = `MC${Math.floor(Math.random() * 100).toString().padStart(2, '0')}`;
+          const operationType = operationTypes[Math.floor(Math.random() * operationTypes.length)];
+          const grainCount = Math.floor(Math.random() * 300) + 1; // 1-300
+          const grainWeight = (Math.random() * 10 + 1).toFixed(1); // 1-11
+          const totalWeight = (grainCount * grainWeight).toFixed(1);
+          // 生成随机日期（过去dateRange天内）
+          const randomDays = Math.floor(Math.random() * dateRange);
+          const randomDate = new Date();
+          randomDate.setDate(randomDate.getDate() - randomDays);
+          const productionDate = randomDate.toISOString().split('T')[0];
+          const report = {
+            reportId: `test_${Date.now()}_${i}`,
+            workerId: worker.workerId,
+            workerName: worker.name,
+            workArea: workArea,
+            machineId: machineId,
+            greyClothId: greyClothId,
+            operationType: operationType,
+            materialCode: materialCode,
+            materialName: materialName,
+            grainCount: grainCount,
+            grainWeight: parseFloat(grainWeight),
+            totalWeight: parseFloat(totalWeight),
+            productionDate: productionDate,
+            remarks: '测试数据',
+           timestamp: new Date(productionDate).getTime() 
+          };
+          testReports.push(report);
+        }
+        resolve(testReports);
+      });
+    }
+    // 显示提示信息
+    function showAlert(message, type) {
+      // 移除现有提示
+      document.querySelectorAll('.alert-floating').forEach(el => el.remove());
+      const alertDiv = document.createElement('div');
+      alertDiv.classList.add('alert', `alert-${type}`, 'alert-floating');
+      alertDiv.innerHTML = `
+        <i class="fas ${type === 'success' ? 'fa-check-circle' :
+                      type === 'danger' ? 'fa-exclamation-circle' :
+                      type === 'warning' ? 'fa-exclamation-triangle' :
+                      'fa-info-circle'} me-2"></i>
+        ${message}
+      `;
+      document.body.appendChild(alertDiv);
+      // 3秒后移除提示
+      setTimeout(() => {
+        alertDiv.remove();
+      }, 3000);
+    }
+
+    // --- 新增设备管理功能 ---
+    // 添加新设备
+    async function addNewMachine() {
+        const area = document.getElementById('newMachineArea').value;
+        const machineId = document.getElementById('newMachineId').value.trim();
+        const desc = document.getElementById('newMachineDesc').value.trim();
+
+        if (!machineId) {
+            showAlert('请输入设备编号', 'danger');
+            return;
+        }
+        if (machines.some(m => m.machineId === machineId)) {
+            showAlert(`设备编号 ${machineId} 已存在`, 'warning');
+            return;
+        }
+
+        const newMachine = { machineId, area, desc };
+        machines.push(newMachine);
+        try {
+            const transaction = db.transaction([MACHINES_STORE], 'readwrite');
+            const store = transaction.objectStore(MACHINES_STORE);
+            store.add(newMachine);
+            document.getElementById('newMachineId').value = '';
+            document.getElementById('newMachineDesc').value = '';
+            updateMachinesTable();
+            updateMachineStats();
+            updateMemoryUsage();
+            showAlert(`成功添加设备：${machineId}`, 'success');
+        } catch (error) {
+            console.error('添加设备失败:', error);
+            showAlert('添加设备失败，请重试', 'danger');
+            // 回滚本地数据
+            machines = machines.filter(m => m.machineId !== machineId);
+        }
+    }
+
+    // 删除设备
+    async function deleteMachine(machineId) {
+        if (confirm(`确定要删除设备 ${machineId} 吗？`)) {
+            try {
+                const transaction = db.transaction([MACHINES_STORE], 'readwrite');
+                const store = transaction.objectStore(MACHINES_STORE);
+                store.delete(machineId);
+                machines = machines.filter(m => m.machineId !== machineId);
+                updateMachinesTable();
+                updateMachineStats();
+                updateMemoryUsage();
+                showAlert(`设备 ${machineId} 已删除`, 'success');
+            } catch (error) {
+                console.error('删除设备失败:', error);
+                showAlert('删除设备失败，请重试', 'danger');
+            }
+        }
+    }
+
+    // 更新设备表格
+    function updateMachinesTable() {
+        const tableBody = document.getElementById('machinesTableBody');
+        const filterValue = document.getElementById('machineAreaFilter').value;
+
+        let filteredMachines = machines;
+        if (filterValue) {
+            filteredMachines = machines.filter(m => m.area === filterValue);
+        }
+
+        tableBody.innerHTML = '';
+        filteredMachines.forEach((machine, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${machine.area}</td>
+                <td>${machine.machineId}</td>
+                <td>${machine.desc || '-'}</td>
+                <td>
+                    <button class="btn btn-sm btn-danger delete-machine" data-machine-id="${machine.machineId}">
+                        <i class="fas fa-trash-alt"></i> 删除
+                    </button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+        });
+        if (filteredMachines.length === 0) {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">暂无设备数据</td></tr>';
+        }
+    }
+
+    // 筛选设备表格
+    function filterMachinesTable() {
+        updateMachinesTable();
+    }
+
+    // 更新设备统计信息
+    function updateMachineStats() {
+        const totalMachines = machines.length;
+        const areas = [...new Set(machines.map(m => m.area))];
+        const totalAreas = areas.length;
+        const avgMachines = totalAreas > 0 ? (totalMachines / totalAreas).toFixed(1) : 0;
+
+        document.getElementById('totalMachinesCount').textContent = totalMachines;
+        document.getElementById('totalAreasCount').textContent = totalAreas;
+        document.getElementById('avgMachinesPerArea').textContent = avgMachines;
+    }
+    // --- 新增：全部删除设备功能 ---
+
+    // 1. 定义全部删除设备的函数
+    async function deleteAllMachines() {
+      // 弹出浏览器内置的确认对话框，防止误删
+      // 注意：machines.length 在确认对话框弹出时是当前设备数量
+      const countToDelete = machines.length;
+      if (countToDelete === 0) {
+          showAlert('当前没有设备可删除', 'warning');
+          return; // 如果没有设备，直接返回
+      }
+
+      if (confirm(`确定要删除所有 ${countToDelete} 台设备吗？此操作不可恢复！`)) {
+        try {
+          // 显示加载指示器（如果您的代码中有这个函数）
+          // showLoading();
+
+          // 获取数据库事务对象，用于读写 MACHINES_STORE (设备存储)
+          const transaction = db.transaction([MACHINES_STORE], 'readwrite');
+          const store = transaction.objectStore(MACHINES_STORE);
+
+          // 调用 store.clear() 方法，清空 MACHINES_STORE 对象存储中的所有数据
+          const clearRequest = store.clear();
+
+          // 处理清空操作成功完成后的逻辑
+          clearRequest.onsuccess = function() {
+            // 更新全局 machines 数组，将其清空
+            machines = [];
+
+            // 更新相关的 UI 元素
+            updateMachinesTable(); // 刷新设备表格显示
+            updateMachineStats();  // 更新设备统计信息
+            updateMemoryUsage();   // 更新内存使用情况（如果适用）
+
+            // 显示成功提示
+            showAlert(`所有 ${countToDelete} 台设备已删除`, 'success');
+
+            // 隐藏加载指示器（如果您的代码中有这个函数）
+            // hideLoading();
+          };
+
+          // 处理清空操作失败的逻辑
+          clearRequest.onerror = function(event) {
+            console.error('清空设备数据失败:', event.target.error);
+            showAlert('清空设备数据失败，请重试', 'danger');
+            // 隐藏加载指示器（如果您的代码中有这个函数）
+            // hideLoading();
+          };
+
+        } catch (error) {
+          // 捕获并处理其他可能发生的同步错误
+          console.error('全部删除设备过程中发生错误:', error);
+          showAlert('全部删除设备失败，请重试', 'danger');
+          // 隐藏加载指示器（如果您的代码中有这个函数）
+          // hideLoading();
+        }
+      }
+      // 如果用户点击了确认对话框的“取消”，则什么也不做，函数直接结束
+    }
+
+    // 2. 为新增的按钮添加点击事件监听器
+    // 找到 id 为 'deleteAllMachinesBtn' 的元素（就是我们刚添加的按钮），
+    // 并监听它的 'click' (点击) 事件。
+    // 当按钮被点击时，就执行上面定义的 deleteAllMachines 函数。
+    document.getElementById('deleteAllMachinesBtn').addEventListener('click', deleteAllMachines);
+
+    // --- /新增：全部删除设备功能 ---
+    // 预览设备导入Excel
+    function previewImportMachines() {
+        const fileInput = document.getElementById('importMachinesFile');
+        const file = fileInput.files[0];
+        const statusEl = document.getElementById('importMachinesStatus');
+        const previewTable = document.getElementById('importMachinesPreview').querySelector('tbody');
+        if (!file) {
+            statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+                if (jsonData.length === 0) {
+                    previewTable.innerHTML = '<tr><td colspan="3" class="text-center">Excel文件中没有数据</td></tr>';
+                    return;
+                }
+                const requiredFields = ['作业区域', '设备编号', '设备描述'];
+                const header = jsonData[0];
+                const hasRequiredFields = requiredFields.every(field => header.includes(field));
+                if (!hasRequiredFields) {
+                    previewTable.innerHTML = `<tr><td colspan="3" class="text-center">Excel文件格式不正确，需要包含列：${requiredFields.join(', ')}</td></tr>`;
+                    return;
+                }
+                let html = '';
+                for (let i = 1; i < Math.min(6, jsonData.length); i++) {
+                    const row = jsonData[i];
+                    html += '<tr>';
+                    html += `<td>${row[header.indexOf('作业区域')] || ''}</td>`;
+                    html += `<td>${row[header.indexOf('设备编号')] || ''}</td>`;
+                    html += `<td>${row[header.indexOf('设备描述')] || ''}</td>`;
+                    html += '</tr>';
+                }
+                if (jsonData.length > 6) {
+                    html += `<tr><td colspan="3" class="text-center">...只显示前5行，共${jsonData.length - 1}行数据</td></tr>`;
+                }
+                previewTable.innerHTML = html;
+                statusEl.innerHTML = `<div class="alert alert-success">检测到 ${jsonData.length - 1} 条设备记录</div>`;
+            } catch (error) {
+                console.error('预览设备Excel文件出错:', error);
+                previewTable.innerHTML = '<tr><td colspan="3" class="text-center">处理文件时出错，请检查文件格式</td></tr>';
+                statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>';
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // 处理设备导入Excel文件
+    function processImportMachinesFile() {
+        const fileInput = document.getElementById('importMachinesFile');
+        const file = fileInput.files[0];
+        const statusEl = document.getElementById('importMachinesStatus');
+        if (!file) {
+            statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>';
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = async function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
+                if (jsonData.length === 0) {
+                    statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>';
+                    return;
+                }
+                const requiredFields = ['作业区域', '设备编号', '设备描述'];
+                const hasRequiredFields = requiredFields.every(field =>
+                    Object.keys(jsonData[0]).includes(field)
+                );
+                if (!hasRequiredFields) {
+                    statusEl.innerHTML = '<div class="alert alert-danger">Excel文件格式不正确，需要包含列：作业区域, 设备编号, 设备描述</div>';
+                    return;
+                }
+
+                const newMachines = [];
+                const duplicateIds = [];
+                jsonData.forEach(item => {
+                    const machineId = (item['设备编号'] || '').toString().trim();
+                    const area = item['作业区域'] || '';
+                    const desc = item['设备描述'] || '';
+                    if (machineId && !machines.some(m => m.machineId === machineId)) {
+                        newMachines.push({ machineId, area, desc });
+                    } else if (machineId) {
+                        duplicateIds.push(machineId);
+                    }
+                });
+
+                if (newMachines.length === 0) {
+                    statusEl.innerHTML = '<div class="alert alert-warning">没有新的设备需要导入，或所有设备编号已存在</div>';
+                    return;
+                }
+
+                // 保存到数据库
+                const transaction = db.transaction([MACHINES_STORE], 'readwrite');
+                const store = transaction.objectStore(MACHINES_STORE);
+                let successCount = 0;
+                let errorCount = 0;
+
+                await new Promise((resolve) => {
+                    let processed = 0;
+                    newMachines.forEach(machine => {
+                        const request = store.add(machine);
+                        request.onsuccess = () => {
+                            successCount++;
+                            processed++;
+                            if (processed === newMachines.length) resolve();
+                        };
+                        request.onerror = (event) => {
+                            console.error(`导入设备 ${machine.machineId} 失败:`, event.target.error);
+                            errorCount++;
+                            processed++;
+                            if (processed === newMachines.length) resolve();
+                        };
+                    });
+                });
+
+                // 更新本地数据
+                machines.push(...newMachines);
+                updateMachinesTable();
+                updateMachineStats();
+                updateMemoryUsage();
+
+                let message = `成功导入 ${successCount} 台设备`;
+                if (errorCount > 0) {
+                    message += `，${errorCount} 台设备导入失败`;
+                }
+                if (duplicateIds.length > 0) {
+                    message += `。以下设备编号已存在并被跳过: ${duplicateIds.slice(0, 5).join(', ')}${duplicateIds.length > 5 ? '...' : ''}`;
+                }
+                statusEl.innerHTML = `<div class="alert alert-success">${message}</div>`;
+                new bootstrap.Modal(document.getElementById('importMachinesModal')).hide();
+
+            } catch (error) {
+                console.error('处理设备导入Excel文件出错:', error);
+                statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>';
+            }
+        };
+        reader.readAsArrayBuffer(file);
+    }
+
+    // --- 新增报工界面设备选择功能 ---
+    // 打开设备选择弹窗
+    function openMachineSelectModal() {
+        if (manualMachineInputEnabled) {
+            showAlert('请先切换回选择列表模式', 'warning');
+            return;
+        }
+        if (!currentWorkArea) {
+            showAlert('请先登录并选择作业区域', 'warning');
+            return;
+        }
+        // 清空搜索框
+        document.getElementById('machineSearchInput').value = '';
+        // 更新列表
+        updateMachineModalList();
+        // 显示模态框
+        new bootstrap.Modal(document.getElementById('machineSelectModal')).show();
+    }
+
+    // 更新设备选择弹窗列表
+    function updateMachineModalList() {
+        const listElement = document.getElementById('machineSelectList');
+        const searchInput = document.getElementById('machineSearchInput').value.toLowerCase();
+        const countDisplay = document.getElementById('machineModalCount');
+
+        // 过滤当前作业区域的设备
+        let filteredMachines = machines.filter(m => m.area === currentWorkArea);
+
+        // 根据搜索词进一步过滤
+        if (searchInput) {
+            filteredMachines = filteredMachines.filter(m =>
+                m.machineId.toLowerCase().includes(searchInput) ||
+                (m.desc && m.desc.toLowerCase().includes(searchInput))
+            );
+        }
+
+        countDisplay.textContent = filteredMachines.length;
+
+        if (filteredMachines.length === 0) {
+            listElement.innerHTML = '<div class="text-center text-muted">暂无匹配的设备</div>';
+            return;
+        }
+
+        // 按设备编号排序
+        filteredMachines.sort((a, b) => a.machineId.localeCompare(b.machineId));
+
+        let html = '';
+        const selectedMachineId = document.getElementById('machineId').value;
+        filteredMachines.forEach(machine => {
+            const isSelected = machine.machineId === selectedMachineId;
+            const descText = machine.desc ? `<div class="machine-modal-desc">${machine.desc}</div>` : '';
+            html += `
+                <div class="machine-modal-item ${isSelected ? 'selected' : ''}" data-machine-id="${machine.machineId}">
+                    <div class="machine-modal-id">${machine.machineId}</div>
+                    ${descText}
+                </div>
+            `;
+        });
+        listElement.innerHTML = html;
+    }
+
+    // 选择设备
+    function selectMachine(machineId) {
+        document.getElementById('machineId').value = machineId;
+    }
+
+  </script>
+</body>
+</html>
