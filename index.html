@@ -1572,6 +1572,25 @@ async function loadMatchesFromBackend() {
     }
 }
 // +++ 新增的函数 END +++
+// +++ 新增的函数 START +++
+async function loadMachinesFromBackend() {
+    try {
+        // 调用我们刚刚创建的 /machines 后端接口
+        const response = await fetch('/.netlify/functions/machines');
+        if (!response.ok) throw new Error('网络响应错误');
+        
+        // 将从后端获取的设备数据直接赋值给全局变量
+        machines = await response.json(); 
+        
+        // 调用已有的函数来更新设备相关的界面
+        updateMachinesTable();
+        updateMachineStats();
+    } catch (error) {
+        console.error('从后端加载设备数据失败:', error);
+        showAlert('设备列表加载失败，请刷新重试', 'warning');
+    }
+}
+// +++ 新增的函数 END +++
     // 初始化
     document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('productionDate').valueAsDate = new Date();
@@ -1839,8 +1858,71 @@ await Promise.all([
     function exportAllData() { const wb = XLSX.utils.book_new(); const ws1 = XLSX.utils.json_to_sheet(workers); XLSX.utils.book_append_sheet(wb, ws1, '员工数据'); const ws2 = XLSX.utils.json_to_sheet(reports); XLSX.utils.book_append_sheet(wb, ws2, '报工记录'); const ws3 = XLSX.utils.json_to_sheet(materialMatches); XLSX.utils.book_append_sheet(wb, ws3, '原料匹配表'); const ws4 = XLSX.utils.json_to_sheet(machines); XLSX.utils.book_append_sheet(wb, ws4, '设备数据'); XLSX.writeFile(wb, '报工系统备份_' + new Date().toISOString().slice(0, 10) + '.xlsx'); showAlert('所有数据已导出', 'success'); }
     async function generateTestData() { /*... 省略测试数据生成逻辑 ...*/ showAlert('测试数据生成功能待后端支持', 'info');}
     function showAlert(message, type) { document.querySelectorAll('.alert-floating').forEach(el => el.remove()); const alertDiv = document.createElement('div'); alertDiv.classList.add('alert', `alert-${type}`, 'alert-floating'); alertDiv.innerHTML = ` <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i> ${message} `; document.body.appendChild(alertDiv); setTimeout(() => { alertDiv.remove(); }, 3000); }
-    function addNewMachine() { /*... 省略设备管理逻辑 ...*/ }
-    function deleteMachine(machineId) { /*... 省略设备管理逻辑 ...*/ }
+    // --- 替换整个函数 START ---
+async function addNewMachine() {
+    const area = document.getElementById('newMachineArea').value;
+    const machineId = document.getElementById('newMachineId').value.trim();
+    const desc = document.getElementById('newMachineDesc').value.trim();
+
+    if (!area || !machineId) {
+        showAlert('作业区域和设备编号不能为空', 'danger');
+        return;
+    }
+
+    const newMachine = { area: area, machine_id: machineId, desc: desc };
+
+    try {
+        showLoading();
+        const response = await fetch('/.netlify/functions/machines', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newMachine)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            if (errorData.error && errorData.error.includes('duplicate key')) {
+                throw new Error(`设备编号 ${machineId} 已存在`);
+            }
+            throw new Error(errorData.error || '添加失败');
+        }
+
+        showAlert(`成功添加设备：${machineId}`, 'success');
+        document.getElementById('newMachineId').value = '';
+        document.getElementById('newMachineDesc').value = '';
+        await loadMachinesFromBackend(); // 重新从后端加载数据以刷新列表
+    } catch (error) {
+        showAlert(`添加失败: ${error.message}`, 'danger');
+    } finally {
+        hideLoading();
+    }
+}
+// --- 替换整个函数 END ---
+    // --- 替换整个函数 START ---
+async function deleteMachine(machineId) {
+    if (!confirm(`确定要删除设备 ${machineId} 吗？`)) return;
+
+    try {
+        showLoading();
+        // 注意URL中包含了查询参数，这是向后端传递要删除哪个设备ID的方式
+        const response = await fetch(`/.netlify/functions/machines?machine_id=${machineId}`, {
+            method: 'DELETE'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || '删除失败');
+        }
+
+        showAlert(`成功删除设备：${machineId}`, 'success');
+        await loadMachinesFromBackend(); // 重新加载以刷新列表
+    } catch (error) {
+        showAlert(`删除失败: ${error.message}`, 'danger');
+    } finally {
+        hideLoading();
+    }
+}
+// --- 替换整个函数 END ---
     function updateMachinesTable() { /*... 省略设备管理逻辑 ...*/ }
     function filterMachinesTable() { /*... 省略设备管理逻辑 ...*/ }
     function updateMachineStats() { /*... 省略设备管理逻辑 ...*/ }
