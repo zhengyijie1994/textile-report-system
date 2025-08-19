@@ -1787,6 +1787,26 @@
         if (manualMachineInputEnabled) { showAlert('请先切换回选择列表模式', 'warning'); return; }
         if (!currentWorkArea) { showAlert('请先登录并选择作业区域', 'warning'); return; }
         document.getElementById('machineSearchInput').value = '';
+// (大约在 1460 行左右)
+function openMachineSelectModal() {
+    if (manualMachineInputEnabled) { showAlert('请先切换回选择列表模式', 'warning'); return; }
+    if (!currentWorkArea) { showAlert('请先登录并选择作业区域', 'warning'); return; }
+    document.getElementById('machineSearchInput').value = '';
+
+    // +++ 新增下面的日志 START +++
+    console.log("--- 打开设备选择器 ---");
+    console.log("当前登录的作业区域 (currentWorkArea):", `"${currentWorkArea}"`);
+    console.log("从后端获取的完整设备列表 (machines):", machines);
+    
+    // 我们手动模拟一次过滤，看看结果
+    const filteredForDebug = machines.filter(m => m.area === currentWorkArea);
+    console.log("过滤后的设备列表 (filteredForDebug):", filteredForDebug);
+    console.log(`找到了 ${filteredForDebug.length} 个匹配的设备。`);
+    // +++ 新增上面的日志 END +++
+
+    updateMachineModalList();
+    new bootstrap.Modal(document.getElementById('machineSelectModal')).show();
+}
         updateMachineModalList();
         new bootstrap.Modal(document.getElementById('machineSelectModal')).show();
     }
