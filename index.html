@@ -1549,7 +1549,29 @@
         }
     }
 
+// +++ 新增的函数 START +++
+async function loadMatchesFromBackend() {
+    try {
+        // 调用我们刚刚创建的 /matches 后端接口
+        const response = await fetch('/.netlify/functions/matches');
+        if (!response.ok) {
+            throw new Error('网络响应错误');
+        }
+        const matchesData = await response.json();
+        
+        // 将数据库的下划线命名转换回前端使用的中文键名
+        materialMatches = matchesData.map(item => ({
+            '坯布编号': item.grey_cloth_id,
+            '原料编号': item.material_id,
+            '原料名称': item.material_name
+        }));
 
+    } catch (error) {
+        console.error('从后端加载匹配数据失败:', error);
+        showAlert('纱线匹配表加载失败，请刷新重试', 'warning');
+    }
+}
+// +++ 新增的函数 END +++
     // 初始化
     document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('productionDate').valueAsDate = new Date();
@@ -1558,8 +1580,13 @@
         // --- MODIFIED: 修改了页面加载逻辑 ---
         showLoading();
         
-        // 不再需要 initDatabase()
-        await loadDataFromBackend(); // 从新的后端加载数据
+     // --- 替换 START ---
+// 使用 Promise.all 来并行加载两个接口的数据，速度更快
+await Promise.all([
+    loadDataFromBackend(),    // 加载报工记录
+    loadMatchesFromBackend()  // 同时加载匹配数据
+]);
+// --- 替换 END ---
         
         // --- 员工数据暂时从localStorage加载，未来可以也改成后端 ---
         const savedWorkers = localStorage.getItem('workers');
