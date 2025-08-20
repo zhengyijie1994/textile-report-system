@@ -1162,12 +1162,15 @@ html
                 <div class="card">
                   <div class="card-body">
                     <h5 class="card-title">备份与恢复</h5>
+                    <p class="card-text text-muted small">导出系统内所有核心数据到单个Excel文件，或执行危险的清空操作。</p>
                     <button id="exportAllDataBtn" class="btn btn-success w-100 mb-3 btn-hover-grow">
                       <i class="fas fa-download me-2"></i>导出所有数据
                     </button>
-                    <button id="clearAllDataBtn" class="btn btn-danger w-100 btn-hover-grow">
-                      <i class="fas fa-trash-alt me-2"></i>清空所有数据
+                    <!-- ########## MODIFIED: Button ID and Text Changed ########## -->
+                    <button id="clearAllReportsBtn" class="btn btn-danger w-100 btn-hover-grow">
+                      <i class="fas fa-trash-alt me-2"></i>清空所有报工数据
                     </button>
+                    <!-- ######################################################## -->
                   </div>
                 </div>
               </div>
@@ -1738,7 +1741,9 @@ html
       document.getElementById('clearFilterBtn').addEventListener('click', clearFilters);
       document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
       document.getElementById('addWorkerBtn').addEventListener('click', addNewWorker);
-      document.getElementById('clearAllDataBtn').addEventListener('click', clearAllData);
+      // ########## MODIFIED: Event listener updated ##########
+      document.getElementById('clearAllReportsBtn').addEventListener('click', clearAllReports);
+      // ######################################################
       document.getElementById('saveReportBtn').addEventListener('click', saveReportChanges);
       document.getElementById('deleteByDateBtn').addEventListener('click', deleteByDate);
       document.getElementById('exportAllDataBtn').addEventListener('click', exportAllData);
@@ -1866,7 +1871,46 @@ html
     function updateSummaryStats() { const totalReports = reports.length; const totalGrains = reports.reduce((sum, report) => sum + report.grainCount, 0); const totalWorkers = new Set(reports.map(report => report.workerId)).size; const totalWeight = reports.reduce((sum, report) => sum + report.totalWeight, 0).toFixed(1); document.getElementById('totalReports').textContent = totalReports; document.getElementById('totalGrains').textContent = totalGrains; document.getElementById('totalWorkers').textContent = totalWorkers; document.getElementById('totalWeight').textContent = totalWeight; updateSummaryTable(); updateOperationTypeChart(); updateWorkerRankingChart(); const summaryWorkerId = document.getElementById('summaryWorkerId'); summaryWorkerId.innerHTML = '<option value="">全部工号</option>'; const uniqueWorkerIds = [...new Set(reports.map(report => report.workerId))]; uniqueWorkerIds.forEach(id => { const report = reports.find(r => r.workerId === id); const option = document.createElement('option'); option.value = id; option.textContent = `${id} - ${report ? report.workerName : '未知'}`; summaryWorkerId.appendChild(option); }); }
     function updateOperationTypeChart() { const operationTypeCounts = { '上纱': 0, '下纱': 0 }; reports.forEach(report => { if(operationTypeCounts[report.operationType] !== undefined) operationTypeCounts[report.operationType]++; }); const labels = Object.keys(operationTypeCounts); const data = Object.values(operationTypeCounts); if (typeChartInstance) { typeChartInstance.destroy(); } const ctx = document.getElementById('operationTypeChart').getContext('2d'); typeChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#2c6fbb', '#6c757d'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', }, tooltip: { callbacks: { label: function(context) { const label = context.label || ''; const value = context.raw || 0; const total = context.dataset.data.reduce((a, b) => a + b, 0); if (total === 0) return `${label}: 0 (0%)`; const percentage = Math.round((value / total) * 100); return `${label}: ${value} (${percentage}%)`; } } } } } }); }
     function updateWorkerRankingChart() { const workerReportCounts = {}; reports.forEach(report => { if (!workerReportCounts[report.workerId]) { workerReportCounts[report.workerId] = { name: report.workerName, count: 0 }; } workerReportCounts[report.workerId].count++; }); const sortedWorkers = Object.values(workerReportCounts).sort((a, b) => b.count - a.count).slice(0, 7); const labels = sortedWorkers.map(worker => worker.name); const data = sortedWorkers.map(worker => worker.count); if (rankingChartInstance) { rankingChartInstance.destroy(); } const ctx = document.getElementById('workerRankingChart').getContext('2d'); rankingChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: '报工次数', data: data, backgroundColor: '#2c6fbb', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: '报工次数' } }, x: { title: { display: true, text: '员工姓名' } } } } }); }
-    async function clearAllData() { /*... 此处省略清空逻辑，未来可添加后端支持 ...*/ showAlert('清空功能待后端支持', 'info');}
+    
+    // ########## MODIFIED: clearAllData function is now clearAllReports and implemented ##########
+    async function clearAllReports() {
+        if (!confirm('警告：此操作将删除【所有报工数据】，员工和设备信息将保留。此操作无法恢复，确定要继续吗？')) {
+            return;
+        }
+
+        showLoading();
+        try {
+            const response = await fetch('/.netlify/functions/reports', {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '清空失败');
+            }
+
+            // If backend deletion is successful, clear local data and update UI
+            reports = [];
+            filteredReports = []; // Also clear the filtered array
+            
+            showAlert('所有报工数据已成功清空。', 'success');
+
+            // Refresh all related UI components
+            currentPage = 1; // Reset pagination
+            updateSummaryStats(); // This will also call updateSummaryTable and the charts
+            updateWorkersTable(); // To update report counts per worker
+            updateWorkerStats();  // To update average reports
+            updateMemoryUsage();
+
+        } catch (error) {
+            console.error('清空报工数据失败:', error);
+            showAlert(`清空失败: ${error.message}`, 'danger');
+        } finally {
+            hideLoading();
+        }
+    }
+    // #############################################################################################
+
     function exportAllData() { const wb = XLSX.utils.book_new(); const ws1 = XLSX.utils.json_to_sheet(workers); XLSX.utils.book_append_sheet(wb, ws1, '员工数据'); const ws2 = XLSX.utils.json_to_sheet(reports); XLSX.utils.book_append_sheet(wb, ws2, '报工记录'); const ws3 = XLSX.utils.json_to_sheet(materialMatches); XLSX.utils.book_append_sheet(wb, ws3, '原料匹配表'); const ws4 = XLSX.utils.json_to_sheet(machines); XLSX.utils.book_append_sheet(wb, ws4, '设备数据'); XLSX.writeFile(wb, '报工系统备份_' + new Date().toISOString().slice(0, 10) + '.xlsx'); showAlert('所有数据已导出', 'success'); }
     async function generateTestData() { /*... 省略测试数据生成逻辑 ...*/ showAlert('测试数据生成功能待后端支持', 'info');}
     function showAlert(message, type) { document.querySelectorAll('.alert-floating').forEach(el => el.remove()); const alertDiv = document.createElement('div'); alertDiv.classList.add('alert', `alert-${type}`, 'alert-floating'); alertDiv.innerHTML = ` <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i> ${message} `; document.body.appendChild(alertDiv); setTimeout(() => { alertDiv.remove(); }, 3000); }
