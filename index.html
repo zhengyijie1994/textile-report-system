@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -558,7 +558,6 @@
 </head>
 <body>
   
-  <!-- 您的所有 HTML 结构代码都保持不变 -->
   <div class="container">
     <div class="header">
       <h3><i class="fas fa-industry me-2"></i>纺织厂报工系统</h3>
@@ -580,13 +579,11 @@
           <i class="fas fa-list-alt me-2"></i>报工汇总
         </button>
       </li>
-      <!-- 新增员工管理选项卡 -->
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="worker-tab" data-bs-toggle="tab" data-bs-target="#worker-pane" type="button" role="tab">
           <i class="fas fa-users me-2"></i>员工管理
         </button>
       </li>
-      <!-- 新增设备管理选项卡 -->
       <li class="nav-item" role="presentation">
         <button class="nav-link" id="machine-tab" data-bs-toggle="tab" data-bs-target="#machine-pane" type="button" role="tab">
           <i class="fas fa-cogs me-2"></i>设备管理
@@ -611,7 +608,6 @@
                 <option value="">-- 请选择员工 --</option>
               </select>
             </div>
-            <!-- 新增作业区域选择 -->
             <div class="form-group mb-4">
               <label for="workAreaSelect" class="form-label">作业区域：</label>
               <select id="workAreaSelect" class="form-control">
@@ -649,16 +645,16 @@
             <form id="reportForm">
               <div class="row mb-3">
                 <div class="col-md-6">
-    <div class="form-group">
-        <label for="machineId">设备编号：</label>
-        <div class="input-group">
-            <input type="text" id="machineId" class="form-control" placeholder="请输入或选择设备编号" required>
-            <button type="button" id="selectMachineBtn" class="btn btn-outline-primary" title="选择设备"><i class="fas fa-list"></i></button>
-            <button type="button" id="toggleMachineInputBtn" class="btn btn-outline-secondary btn-hover-grow" title="切换手动输入"><i class="fas fa-keyboard"></i></button>
-        </div>
-        <div class="form-text">点击 <i class="fas fa-list"></i> 选择设备，或点击 <i class="fas fa-keyboard"></i> 手动输入</div>
-    </div>
-</div>
+                    <div class="form-group">
+                        <label for="machineId">设备编号：</label>
+                        <div class="input-group">
+                            <input type="text" id="machineId" class="form-control" placeholder="请输入或选择设备编号" required>
+                            <button type="button" id="selectMachineBtn" class="btn btn-outline-primary" title="选择设备"><i class="fas fa-list"></i></button>
+                            <button type="button" id="toggleMachineInputBtn" class="btn btn-outline-secondary btn-hover-grow" title="切换手动输入"><i class="fas fa-keyboard"></i></button>
+                        </div>
+                        <div class="form-text">点击 <i class="fas fa-list"></i> 选择设备，或点击 <i class="fas fa-keyboard"></i> 手动输入</div>
+                    </div>
+                </div>
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="greyClothId">坯布编号：</label>
@@ -711,25 +707,7 @@
                       <input type="number" id="grainWeight" class="form-control" min="0" max="15" step="0.5" placeholder="请输入粒重" required>
                       <select class="form-select" id="grainWeightOptions" style="max-width: 150px;">
                         <option value="">常用值</option>
-                        <option value="1">1</option>
-                        <option value="1.5">1.5</option>
-                        <option value="2">2</option>
-                        <option value="2.5">2.5</option>
-                        <option value="3">3</option>
-                        <option value="3.5">3.5</option>
-                        <option value="4">4</option>
-                        <option value="4.5">4.5</option>
-                        <option value="5">5</option>
-                        <option value="5.5">5.5</option>
-                        <option value="6">6</option>
-                        <option value="6.5">6.5</option>
-                        <option value="7">7</option>
-                        <option value="7.5">7.5</option>
-                        <option value="8">8</option>
-                        <option value="8.5">8.5</option>
-                        <option value="9">9</option>
-                        <option value="9.5">9.5</option>
-                        <option value="10">10</option>
+                        <option value="1">1</option> <option value="1.5">1.5</option> <option value="2">2</option> <option value="2.5">2.5</option> <option value="3">3</option> <option value="3.5">3.5</option> <option value="4">4</option> <option value="4.5">4.5</option> <option value="5">5</option> <option value="5.5">5.5</option> <option value="6">6</option> <option value="6.5">6.5</option> <option value="7">7</option> <option value="7.5">7.5</option> <option value="8">8</option> <option value="8.5">8.5</option> <option value="9">9</option> <option value="9.5">9.5</option> <option value="10">10</option>
                       </select>
                     </div>
                   </div>
@@ -746,16 +724,11 @@
                 <textarea id="remarks" class="form-control" rows="2"></textarea>
               </div>
               <div class="d-flex justify-content-between">
-                <div>
-                  <button type="submit" class="btn btn-primary me-2 btn-hover-grow">
-                    <i class="fas fa-paper-plane me-2"></i>提交报工
-                  </button>
-                  <button type="button" id="resetReportBtn" class="btn btn-secondary me-2 btn-hover-grow">
-                    <i class="fas fa-redo me-2"></i>重置
-                  </button>
-                </div>
-                <button type="button" id="uploadExcelBtn" class="btn btn-info btn-hover-grow">
-                  <i class="fas fa-upload me-2"></i>上传匹配表
+                <button type="button" id="resetReportBtn" class="btn btn-secondary btn-hover-grow">
+                  <i class="fas fa-redo me-2"></i>重置
+                </button>
+                <button type="submit" class="btn btn-primary btn-hover-grow">
+                  <i class="fas fa-paper-plane me-2"></i>提交报工
                 </button>
               </div>
             </form>
@@ -880,7 +853,6 @@
                 </tbody>
               </table>
             </div>
-            <!-- 分页控件 -->
             <div class="pagination-container">
               <div class="page-info">
                 共 <span id="totalRecords">0</span> 条记录，每页 30 条
@@ -922,7 +894,7 @@
           </div>
         </div>
       </div>
-      <!-- 新增员工管理面板 -->
+      <!-- 员工管理面板 -->
       <div class="tab-pane fade" id="worker-pane" role="tabpanel">
         <div class="row mb-4">
           <div class="col-md-4">
@@ -1004,7 +976,7 @@
           </div>
         </div>
       </div>
-       <!-- 新增设备管理面板 -->
+       <!-- 设备管理面板 -->
        <div class="tab-pane fade" id="machine-pane" role="tabpanel">
         <div class="row mb-4">
           <div class="col-md-4">
@@ -1026,23 +998,13 @@
             </div>
           </div>
         </div>
-<!-- 新增：全部删除按钮区域 -->
-<div class="row mb-3">
-  <div class="col-md-12">
-    <!-- 全部删除按钮 -->
-    <button id="deleteAllMachinesBtn" class="btn btn-danger btn-sm" title="删除所有设备">
-      <i class="fas fa-trash-alt me-1"></i>全部删除
-    </button>
-    <!-- 如果您希望按钮靠右对齐，可以使用下面的代码替换上面的 button 标签：
-    <div class="text-end">
-      <button id="deleteAllMachinesBtn" class="btn btn-danger btn-sm" title="删除所有设备">
-        <i class="fas fa-trash-alt me-1"></i>全部删除
-      </button>
-    </div>
-    -->
-  </div>
-</div>
-<!-- /新增：全部删除按钮区域 -->
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <button id="deleteAllMachinesBtn" class="btn btn-danger btn-sm" title="删除所有设备">
+              <i class="fas fa-trash-alt me-1"></i>全部删除
+            </button>
+          </div>
+        </div>
         <div class="card machine-card mb-4">
           <div class="card-header machine-card-header d-flex justify-content-between align-items-center">
             <span><i class="fas fa-cog me-2"></i>添加新设备</span>
@@ -1176,7 +1138,27 @@
             </div>
           </div>
         </div>
-        <!-- 新增测试数据生成功能 -->
+        <div class="card mb-4">
+            <div class="card-header">原料匹配表管理</div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle me-2"></i>
+                管理用于自动填充原料信息的坯布-原料匹配表。
+              </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <button id="uploadExcelBtn_settings" class="btn btn-info w-100 mb-3 btn-hover-grow">
+                    <i class="fas fa-upload me-2"></i>上传新匹配表
+                  </button>
+                </div>
+                <div class="col-md-6">
+                  <button id="clearAllMatchesBtn_settings" class="btn btn-danger w-100 btn-hover-grow">
+                    <i class="fas fa-trash-alt me-2"></i>清空所有匹配数据
+                  </button>
+                </div>
+              </div>
+            </div>
+        </div>
         <div class="card mb-4 test-data-card">
           <div class="card-header">系统压力测试</div>
           <div class="card-body">
@@ -1247,7 +1229,7 @@
       <span class="visually-hidden">加载中...</span>
     </div>
   </div>
-  <!-- 原料匹配表上传模态框 -->
+  <!-- Modals -->
   <div class="modal fade" id="uploadModal" tabindex="-1" aria-labelledby="uploadModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
@@ -1285,7 +1267,6 @@
       </div>
     </div>
   </div>
-  <!-- 编辑报工记录模态框 -->
   <div class="modal fade" id="editReportModal" tabindex="-1" aria-labelledby="editReportModalLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
@@ -1296,73 +1277,25 @@
         <div class="modal-body">
           <form id="editReportForm">
             <input type="hidden" id="editReportId">
+            <div class="mb-3"><label for="editWorkerId" class="form-label">工号</label><input type="text" id="editWorkerId" class="form-control" readonly></div>
+            <div class="mb-3"><label for="editWorkerName" class="form-label">姓名</label><input type="text" id="editWorkerName" class="form-control" readonly></div>
+            <div class="mb-3"><label for="editWorkArea" class="form-label">作业区域</label><input type="text" id="editWorkArea" class="form-control" readonly></div>
+            <div class="mb-3"><label for="editMachineId" class="form-label">设备编号</label><input type="text" id="editMachineId" class="form-control" required></div>
+            <div class="mb-3"><label for="editGreyClothId" class="form-label">坯布编号</label><input type="text" id="editGreyClothId" class="form-control" required></div>
+            <div class="mb-3"><label for="editMaterialName" class="form-label">原料名称</label><input type="text" id="editMaterialName" class="form-control" required></div>
+            <div class="mb-3"><label for="editOperationType" class="form-label">操作类型</label><select id="editOperationType" class="form-control" required><option value="上纱">上纱</option><option value="下纱">下纱</option></select></div>
+            <div class="mb-3"><label for="editGrainCount" class="form-label">粒数</label><input type="number" id="editGrainCount" class="form-control" min="1" max="300" required></div>
             <div class="mb-3">
-              <label for="editWorkerId" class="form-label">工号</label>
-              <input type="text" id="editWorkerId" class="form-control" readonly>
+                <label for="editGrainWeight" class="form-label">粒重(KG)</label>
+                <div class="input-group">
+                    <input type="number" id="editGrainWeight" class="form-control" min="0" max="15" step="0.5" required>
+                    <select class="form-select" id="editGrainWeightOptions" style="max-width: 150px;">
+                        <option value="">常用值</option>
+                        <option value="1">1</option><option value="1.5">1.5</option><option value="2">2</option><option value="2.5">2.5</option><option value="3">3</option><option value="3.5">3.5</option><option value="4">4</option><option value="4.5">4.5</option><option value="5">5</option><option value="5.5">5.5</option><option value="6">6</option><option value="6.5">6.5</option><option value="7">7</option><option value="7.5">7.5</option><option value="8">8</option><option value="8.5">8.5</option><option value="9">9</option><option value="9.5">9.5</option><option value="10">10</option>
+                    </select>
+                </div>
             </div>
-            <div class="mb-3">
-              <label for="editWorkerName" class="form-label">姓名</label>
-              <input type="text" id="editWorkerName" class="form-control" readonly>
-            </div>
-            <div class="mb-3">
-              <label for="editWorkArea" class="form-label">作业区域</label>
-              <input type="text" id="editWorkArea" class="form-control" readonly>
-            </div>
-            <div class="mb-3">
-              <label for="editMachineId" class="form-label">设备编号</label>
-              <input type="text" id="editMachineId" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="editGreyClothId" class="form-label">坯布编号</label>
-              <input type="text" id="editGreyClothId" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="editMaterialName" class="form-label">原料名称</label>
-              <input type="text" id="editMaterialName" class="form-control" required>
-            </div>
-            <div class="mb-3">
-              <label for="editOperationType" class="form-label">操作类型</label>
-              <select id="editOperationType" class="form-control" required>
-                <option value="上纱">上纱</option>
-                <option value="下纱">下纱</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label for="editGrainCount" class="form-label">粒数</label>
-              <input type="number" id="editGrainCount" class="form-control" min="1" max="300" required>
-            </div>
-            <div class="mb-3">
-              <label for="editGrainWeight" class="form-label">粒重(KG)</label>
-              <div class="input-group">
-                <input type="number" id="editGrainWeight" class="form-control" min="0" max="15" step="0.5" required>
-                <select class="form-select" id="editGrainWeightOptions" style="max-width: 150px;">
-                  <option value="">常用值</option>
-                  <option value="1">1</option>
-                  <option value="1.5">1.5</option>
-                  <option value="2">2</option>
-                  <option value="2.5">2.5</option>
-                  <option value="3">3</option>
-                  <option value="3.5">3.5</option>
-                  <option value="4">4</option>
-                  <option value="4.5">4.5</option>
-                  <option value="5">5</option>
-                  <option value="5.5">5.5</option>
-                  <option value="6">6</option>
-                  <option value="6.5">6.5</option>
-                  <option value="7">7</option>
-                  <option value="7.5">7.5</option>
-                  <option value="8">8</option>
-                  <option value="8.5">8.5</option>
-                  <option value="9">9</option>
-                  <option value="9.5">9.5</option>
-                  <option value="10">10</option>
-                </select>
-              </div>
-            </div>
-            <div class="mb-3">
-              <label for="editProductionDate" class="form-label">生产日期</label>
-              <input type="date" id="editProductionDate" class="form-control" required>
-            </div>
+            <div class="mb-3"><label for="editProductionDate" class="form-label">生产日期</label><input type="date" id="editProductionDate" class="form-control" required></div>
           </form>
         </div>
         <div class="modal-footer">
@@ -1372,91 +1305,48 @@
       </div>
     </div>
   </div>
-  <!-- 导出进度模态框 -->
   <div class="modal fade" id="exportProgressModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">导出数据</h5>
-        </div>
+        <div class="modal-header"><h5 class="modal-title">导出数据</h5></div>
         <div class="modal-body">
           <div class="mb-3">
-            <div class="d-flex justify-content-between mb-1">
-              <span>导出进度：</span>
-              <span id="exportProgressText">0%</span>
-            </div>
-            <div class="progress">
-              <div id="exportProgressBar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"></div>
-            </div>
+            <div class="d-flex justify-content-between mb-1"><span>导出进度：</span><span id="exportProgressText">0%</span></div>
+            <div class="progress"><div id="exportProgressBar" class="progress-bar progress-bar-striped" role="progressbar" style="width: 0%"></div></div>
           </div>
           <div id="exportStatus" class="mt-2"></div>
         </div>
       </div>
     </div>
   </div>
-   <!-- 设备批量导入模态框 -->
   <div class="modal fade" id="importMachinesModal" tabindex="-1" aria-labelledby="importMachinesModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="importMachinesModalLabel">批量导入设备</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+        <div class="modal-header"><h5 class="modal-title" id="importMachinesModalLabel">批量导入设备</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
         <div class="modal-body">
-          <div class="mb-3">
-            <label for="importMachinesFile" class="form-label">选择Excel文件：</label>
-            <input type="file" class="form-control" id="importMachinesFile" accept=".xlsx,.xls">
-          </div>
+          <div class="mb-3"><label for="importMachinesFile" class="form-label">选择Excel文件：</label><input type="file" class="form-control" id="importMachinesFile" accept=".xlsx,.xls"></div>
           <div id="importMachinesStatus" class="mb-3"></div>
           <div class="table-responsive">
             <table class="table table-bordered mt-3" id="importMachinesPreview">
-              <thead>
-                <tr>
-                  <th>作业区域</th>
-                  <th>设备编号</th>
-                  <th>设备描述</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td colspan="3" class="text-center">上传Excel文件后预览数据</td>
-                </tr>
-              </tbody>
+              <thead><tr><th>作业区域</th><th>设备编号</th><th>设备描述</th></tr></thead>
+              <tbody><tr><td colspan="3" class="text-center">上传Excel文件后预览数据</td></tr></tbody>
             </table>
           </div>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
-          <button type="button" id="processImportMachinesBtn" class="btn btn-primary">导入设备</button>
-        </div>
+        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button><button type="button" id="processImportMachinesBtn" class="btn btn-primary">导入设备</button></div>
       </div>
     </div>
   </div>
-  <!-- 设备选择弹窗 - 更新为网格布局 -->
   <div class="modal fade" id="machineSelectModal" tabindex="-1" aria-labelledby="machineSelectModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl"> <!-- 使用更大的模态框以适应网格 -->
+    <div class="modal-dialog modal-xl">
       <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="machineSelectModalLabel">选择设备</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
+        <div class="modal-header"><h5 class="modal-title" id="machineSelectModalLabel">选择设备</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
         <div class="modal-body">
-          <div class="machine-search-container">
-            <i class="fas fa-search machine-search-icon"></i>
-            <input type="text" id="machineSearchInput" class="form-control" placeholder="搜索设备编号或描述...">
-          </div>
-          <div id="machineSelectList" class="machine-modal-list">
-            <div class="text-center text-muted">暂无设备数据</div>
-          </div>
+          <div class="machine-search-container"><i class="fas fa-search machine-search-icon"></i><input type="text" id="machineSearchInput" class="form-control" placeholder="搜索设备编号或描述..."></div>
+          <div id="machineSelectList" class="machine-modal-list"><div class="text-center text-muted">暂无设备数据</div></div>
           <div class="machine-modal-footer">
-            <div class="machine-modal-count">
-              共 <span id="machineModalCount">0</span> 台设备
-            </div>
-            <div class="machine-modal-buttons">
-              <button type="button" id="closeMachineModalBtn" class="btn btn-secondary btn-sm">
-                关闭
-              </button>
-            </div>
+            <div class="machine-modal-count">共 <span id="machineModalCount">0</span> 台设备</div>
+            <div class="machine-modal-buttons"><button type="button" id="closeMachineModalBtn" class="btn btn-secondary btn-sm">关闭</button></div>
           </div>
         </div>
       </div>
@@ -1465,7 +1355,7 @@
 
   <script>
     // #################################################################
-    // ###########       START: MODIFIED JAVASCRIPT          ###########
+    // ###########      START: FULL & CORRECTED JAVASCRIPT     ###########
     // #################################################################
 
     // 全局变量
@@ -1475,51 +1365,35 @@
     let filteredReports = [];
     let workers = [];
     let reports = [];
-    let machines = []; // 设备数据现在将从后端获取
+    let machines = [];
     let typeChartInstance = null;
     let rankingChartInstance = null;
     let manualInputEnabled = false;
     let manualMachineInputEnabled = false;
     let debounceTimer = null;
-    // 分页相关变量
     let currentPage = 1;
     const itemsPerPage = 30;
     
     // DOM元素
-    const tabs = bootstrap.Tab.getOrCreateInstance(document.getElementById('mainTabs'));
-    const reportTab = document.getElementById('report-tab');
-    const greyClothIdInput = document.getElementById('greyClothId');
-    const greyClothSuggestions = document.getElementById('greyClothSuggestions');
     const loadingOverlay = document.getElementById('loadingOverlay');
     
-    // 显示加载指示器
-    function showLoading() {
-      loadingOverlay.style.display = 'flex';
-    }
-    // 隐藏加载指示器
-    function hideLoading() {
-      loadingOverlay.style.display = 'none';
-    }
+    // 显示/隐藏加载指示器
+    function showLoading() { loadingOverlay.style.display = 'flex'; }
+    function hideLoading() { loadingOverlay.style.display = 'none'; }
 
-    // 从 Netlify 后端接口加载报工数据
+    // 从后端加载报工数据
     async function loadDataFromBackend() {
-        showLoading();
         try {
             const response = await fetch('/.netlify/functions/reports');
-            if (!response.ok) {
-                throw new Error(`网络错误: ${response.statusText}`);
-            }
-            const reportsData = await response.json();
-            reports = reportsData;
+            if (!response.ok) throw new Error(`网络错误: ${response.statusText}`);
+            reports = await response.json();
             filteredReports = [...reports];
             updateSummaryStats();
             updateWorkersTable(); 
             updateWorkerStats();
         } catch (error) {
-            console.error('从后端加载数据失败:', error);
-            showAlert('数据加载失败，请检查网络并刷新重试', 'danger');
-        } finally {
-            hideLoading();
+            console.error('从后端加载报工数据失败:', error);
+            showAlert('报工数据加载失败，请刷新重试', 'danger');
         }
     }
 
@@ -1540,20 +1414,17 @@
         }
     }
 
-    // +++ NEW: 从后端加载设备数据 +++
+    // 从后端加载设备数据并转换命名
     async function loadMachinesFromBackend() {
         try {
             const response = await fetch('/.netlify/functions/machines');
             if (!response.ok) throw new Error('网络响应错误');
-            
             const backendMachines = await response.json(); 
-            // 将后端的 snake_case (machine_id) 映射到前端需要的 camelCase (machineId)
             machines = backendMachines.map(m => ({
                 area: m.area,
                 machineId: m.machine_id,
                 desc: m.desc
             }));
-            
             updateMachinesTable();
             updateMachineStats();
         } catch (error) {
@@ -1568,25 +1439,22 @@
       
       try {
         showLoading();
-        
-        // 使用 Promise.all 并行加载所有数据，提高效率
+
+        // 硬编码默认员工列表，保证加载成功
+        workers = [
+            { workerId: '2101001', name: '张三' },
+            { workerId: '2101002', name: '李四' },
+            { workerId: '2101003', name: '王五' }
+        ];
+
+        // 并行加载所有后端数据
         await Promise.all([
-            loadDataFromBackend(),    // 加载报工记录
-            loadMatchesFromBackend(), // 加载匹配数据
-            loadMachinesFromBackend() // 加载设备数据
+            loadDataFromBackend(),
+            loadMatchesFromBackend(),
+            loadMachinesFromBackend()
         ]);
         
-        // 员工数据暂时仍由 localStorage 管理
-        const savedWorkers = localStorage.getItem('workers');
-        if (savedWorkers) {
-            workers = JSON.parse(savedWorkers);
-        } else {
-             workers = [
-              { workerId: '2101001', name: '张三' },
-              { workerId: '2101002', name: '李四' },
-              { workerId: '2101003', name: '王五' }
-            ];
-        }
+        // 更新UI
         updateWorkerSelect();
         updateWorkersTable();
 
@@ -1609,23 +1477,16 @@
     // 更新内存使用情况
     function updateMemoryUsage() {
       try {
-        const reportsSize = JSON.stringify(reports).length;
-        const workersSize = JSON.stringify(workers).length;
-        const matchesSize = JSON.stringify(materialMatches).length;
-        const machinesSize = JSON.stringify(machines).length;
-        const totalSize = reportsSize + workersSize + matchesSize + machinesSize;
+        const totalSize = (JSON.stringify(reports).length + JSON.stringify(workers).length + JSON.stringify(materialMatches).length + JSON.stringify(machines).length);
         const totalKB = (totalSize / 1024).toFixed(2);
-        const maxStorage = 10 * 1024; // 10MB in KB
+        const maxStorage = 10 * 1024; // 10MB
         const usagePercentage = Math.min(100, (totalKB / maxStorage) * 100);
         document.getElementById('storageUsage').textContent = `${totalKB} KB / ${maxStorage} KB`;
-        document.getElementById('storageProgress').style.width = `${usagePercentage}%`;
         const storageProgress = document.getElementById('storageProgress');
-        storageProgress.classList.remove('bg-warning', 'bg-danger');
-        if (usagePercentage > 80) {
-          storageProgress.classList.add('bg-danger');
-        } else if (usagePercentage > 60) {
-          storageProgress.classList.add('bg-warning');
-        }
+        storageProgress.style.width = `${usagePercentage}%`;
+        storageProgress.className = 'progress-bar progress-bar-striped'; // Reset classes
+        if (usagePercentage > 80) storageProgress.classList.add('bg-danger');
+        else if (usagePercentage > 60) storageProgress.classList.add('bg-warning');
       } catch (e) {
         console.error('存储监控出错:', e);
       }
@@ -1675,25 +1536,19 @@
 
       try {
         showLoading();
-        
         const response = await fetch('/.netlify/functions/reports', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(report),
         });
-
         if (!response.ok) {
           const errorBody = await response.json();
           throw new Error(errorBody.error || '提交失败');
         }
-        
         showAlert('报工提交成功！', 'success');
         resetReportForm();
-        
         await loadDataFromBackend();
-        
-        tabs.show(document.getElementById('summary-tab'));
-
+        bootstrap.Tab.getOrCreateInstance(document.getElementById('summary-tab')).show();
       } catch (error) {
         console.error('保存报工记录失败:', error);
         showAlert(`提交失败: ${error.message}`, 'danger');
@@ -1702,324 +1557,87 @@
       }
     }
     
+    // 初始化所有事件监听器
     function initEventListeners() {
+      const uploadModal = new bootstrap.Modal(document.getElementById('uploadModal'));
+
+      // General
       document.getElementById('confirmWorkerBtn').addEventListener('click', confirmWorker);
       document.getElementById('reportForm').addEventListener('submit', handleSubmit);
       document.getElementById('resetReportBtn').addEventListener('click', resetReportForm);
-      greyClothIdInput.addEventListener('input', handleGreyClothInput);
-      document.getElementById('uploadExcelBtn').addEventListener('click', () => {
-        document.getElementById('uploadModal').querySelector('#uploadStatus').innerHTML = '';
-        document.getElementById('excelPreview').querySelector('tbody').innerHTML =
-          '<tr><td colspan="3" class="text-center">上传Excel文件后预览数据</td></tr>';
-        new bootstrap.Modal(document.getElementById('uploadModal')).show();
-      });
+      document.getElementById('greyClothId').addEventListener('input', handleGreyClothInput);
       document.getElementById('processExcelBtn').addEventListener('click', processExcelFile);
+      document.getElementById('excelFile').addEventListener('change', previewExcel);
+      document.getElementById('toggleMaterialInputBtn').addEventListener('click', toggleManualInput);
+      document.getElementById('toggleMachineInputBtn').addEventListener('click', toggleManualMachineInput);
+      document.getElementById('grainWeightOptions').addEventListener('change', (e) => { if (e.target.value) document.getElementById('grainWeight').value = e.target.value; });
+      // Summary Tab
       document.getElementById('filterSummaryBtn').addEventListener('click', filterSummaryData);
       document.getElementById('clearFilterBtn').addEventListener('click', clearFilters);
       document.getElementById('exportExcelBtn').addEventListener('click', exportToExcel);
-      document.getElementById('addWorkerBtn').addEventListener('click', addNewWorker);
-      document.getElementById('clearAllDataBtn').addEventListener('click', clearAllData);
-      document.getElementById('saveReportBtn').addEventListener('click', saveReportChanges);
-      document.getElementById('deleteByDateBtn').addEventListener('click', deleteByDate);
-      document.getElementById('exportAllDataBtn').addEventListener('click', exportAllData);
-      document.getElementById('toggleMaterialInputBtn').addEventListener('click', toggleManualInput);
-      document.getElementById('toggleMachineInputBtn').addEventListener('click', toggleManualMachineInput);
-      document.getElementById('selectMachineBtn').addEventListener('click', openMachineSelectModal);
-      document.getElementById('grainWeightOptions').addEventListener('change', function() {
-        if (this.value) {
-          document.getElementById('grainWeight').value = this.value;
-        }
-      });
-      document.getElementById('editGrainWeightOptions').addEventListener('change', function() {
-        if (this.value) {
-          document.getElementById('editGrainWeight').value = this.value;
-        }
-      });
-      document.getElementById('summaryTableBody').addEventListener('click', (e) => {
-        if (e.target.classList.contains('edit-report') || e.target.closest('.edit-report')) {
-          const reportId = e.target.closest('.edit-report').dataset.reportId;
-          editReport(reportId);
-        }
-        if (e.target.classList.contains('delete-report') || e.target.closest('.delete-report')) {
-          const reportId = e.target.closest('.delete-report').dataset.reportId;
-          deleteReport(reportId);
-        }
-      });
-      document.getElementById('workersTableBody').addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-worker') || e.target.closest('.delete-worker')) {
-          const workerId = e.target.closest('.delete-worker').dataset.workerId;
-          deleteWorker(workerId);
-        }
-      });
-      document.getElementById('excelFile').addEventListener('change', previewExcel);
       document.getElementById('prevPageBtn').addEventListener('click', goToPrevPage);
       document.getElementById('nextPageBtn').addEventListener('click', goToNextPage);
-      document.getElementById('generateTestDataBtn').addEventListener('click', generateTestData);
-      document.getElementById('report-pane').addEventListener('show.bs.tab', function() {
-        document.getElementById('productionDate').valueAsDate = new Date();
+      document.getElementById('summaryTableBody').addEventListener('click', (e) => {
+        const editBtn = e.target.closest('.edit-report');
+        const deleteBtn = e.target.closest('.delete-report');
+        if (editBtn) editReport(editBtn.dataset.reportId);
+        if (deleteBtn) deleteReport(deleteBtn.dataset.reportId);
       });
+      // Worker Tab
+      document.getElementById('addWorkerBtn').addEventListener('click', addNewWorker);
+      document.getElementById('workersTableBody').addEventListener('click', (e) => {
+        const deleteBtn = e.target.closest('.delete-worker');
+        if (deleteBtn) deleteWorker(deleteBtn.dataset.workerId);
+      });
+      // Machine Tab
       document.getElementById('addMachineBtn').addEventListener('click', addNewMachine);
-      document.getElementById('deleteAllMachinesBtn').addEventListener('click', deleteAllMachines); // 添加全部删除按钮监听
-      document.getElementById('importMachinesBtn').addEventListener('click', () => {
-        document.getElementById('importMachinesModal').querySelector('#importMachinesStatus').innerHTML = '';
-        document.getElementById('importMachinesPreview').querySelector('tbody').innerHTML =
-          '<tr><td colspan="3" class="text-center">上传Excel文件后预览数据</td></tr>';
-        new bootstrap.Modal(document.getElementById('importMachinesModal')).show();
-      });
+      document.getElementById('deleteAllMachinesBtn').addEventListener('click', deleteAllMachines);
+      document.getElementById('importMachinesBtn').addEventListener('click', () => new bootstrap.Modal(document.getElementById('importMachinesModal')).show());
       document.getElementById('processImportMachinesBtn').addEventListener('click', processImportMachinesFile);
       document.getElementById('importMachinesFile').addEventListener('change', previewImportMachines);
       document.getElementById('machinesTableBody').addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-machine') || e.target.closest('.delete-machine')) {
-          const machineId = e.target.closest('.delete-machine').dataset.machineId;
-          deleteMachine(machineId);
-        }
+        const deleteBtn = e.target.closest('.delete-machine');
+        if (deleteBtn) deleteMachine(deleteBtn.dataset.machineId);
       });
       document.getElementById('machineAreaFilter').addEventListener('change', filterMachinesTable);
+      // Machine Modal
+      document.getElementById('selectMachineBtn').addEventListener('click', openMachineSelectModal);
       document.getElementById('machineSearchInput').addEventListener('input', updateMachineModalList);
-      document.getElementById('closeMachineModalBtn').addEventListener('click', function() {
-          bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide();
-      });
-      document.getElementById('machineSelectList').addEventListener('click', function(e) {
+      document.getElementById('closeMachineModalBtn').addEventListener('click', () => bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide());
+      document.getElementById('machineSelectList').addEventListener('click', (e) => {
           const item = e.target.closest('.machine-modal-item');
           if (item) {
-              const machineId = item.dataset.machineId;
-              selectMachine(machineId);
+              selectMachine(item.dataset.machineId);
               bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide();
           }
       });
+      // Settings Tab
+      document.getElementById('uploadExcelBtn_settings').addEventListener('click', () => uploadModal.show());
+      document.getElementById('clearAllMatchesBtn_settings').addEventListener('click', clearAllMatches);
+      document.getElementById('clearAllDataBtn').addEventListener('click', clearAllData);
+      document.getElementById('deleteByDateBtn').addEventListener('click', deleteByDate);
+      document.getElementById('exportAllDataBtn').addEventListener('click', exportAllData);
+      document.getElementById('generateTestDataBtn').addEventListener('click', generateTestData);
+      // Edit Modal
+      document.getElementById('saveReportBtn').addEventListener('click', saveReportChanges);
+      document.getElementById('editGrainWeightOptions').addEventListener('change', (e) => { if (e.target.value) document.getElementById('editGrainWeight').value = e.target.value; });
     }
     
-    // --- 以下是其他未修改或仅做微调的函数，保持其原有功能 ---
     function clearFilters() { document.getElementById('summaryWorkerId').value = ''; document.getElementById('summaryWorkArea').value = ''; document.getElementById('summaryOperationType').value = ''; document.getElementById('summaryDateFrom').value = ''; document.getElementById('summaryDateTo').value = ''; filterSummaryData(); }
     function previewExcel() { const fileInput = document.getElementById('excelFile'); const file = fileInput.files[0]; const statusEl = document.getElementById('uploadStatus'); const previewTable = document.getElementById('excelPreview').querySelector('tbody'); if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; } const reader = new FileReader(); reader.onload = function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' }); if (jsonData.length === 0) { previewTable.innerHTML = '<tr><td colspan="3" class="text-center">Excel文件中没有数据</td></tr>'; return; } const requiredFields = ['坯布编号', '原料编号', '原料名称']; const header = jsonData[0]; const hasRequiredFields = requiredFields.every(field => header.includes(field)); if (!hasRequiredFields) { previewTable.innerHTML = `<tr><td colspan="3" class="text-center">Excel文件格式不正确，需要包含列：${requiredFields.join(', ')}</td></tr>`; return; } let html = ''; for (let i = 1; i < Math.min(6, jsonData.length); i++) { const row = jsonData[i]; html += '<tr>'; html += `<td>${row[header.indexOf('坯布编号')] || ''}</td>`; html += `<td>${row[header.indexOf('原料编号')] || ''}</td>`; html += `<td>${row[header.indexOf('原料名称')] || ''}</td>`; html += '</tr>'; } if (jsonData.length > 6) { html += `<tr><td colspan="3" class="text-center">...只显示前5行，共${jsonData.length - 1}行数据</td></tr>`; } previewTable.innerHTML = html; statusEl.innerHTML = `<div class="alert alert-success">检测到 ${jsonData.length - 1} 条匹配记录</div>`; } catch (error) { console.error('预览Excel文件出错:', error); previewTable.innerHTML = '<tr><td colspan="3" class="text-center">处理文件时出错，请检查文件格式</td></tr>'; statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>'; } }; reader.readAsArrayBuffer(file); }
-    function confirmWorker() { const workerSelect = document.getElementById('workerSelect'); const workerId = workerSelect.value; const workArea = document.getElementById('workAreaSelect').value; if (!workerId) { showAlert('请选择员工', 'danger'); return; } if (!workArea) { showAlert('请选择作业区域', 'danger'); return; } const worker = workers.find(w => w.workerId === workerId); if (!worker) { showAlert('所选员工不存在', 'danger'); return; } document.getElementById('workerInfo').style.display = 'block'; document.getElementById('workerInfo').innerHTML = ` <strong>工号：</strong>${worker.workerId}<br> <strong>姓名：</strong>${worker.name}<br> <strong>作业区域：</strong>${workArea}<br> <span class="text-success">已确认，请填写报工信息</span> `; currentWorkerId = workerId; currentWorkArea = workArea; document.getElementById('currentWorkerId').textContent = worker.workerId; document.getElementById('currentWorkerName').textContent = worker.name; document.getElementById('currentWorkArea').textContent = workArea; reportTab.disabled = false; tabs.show(document.getElementById('report-tab')); }
-    function addNewWorker() { const workerId = document.getElementById('newWorkerId').value.trim(); const name = document.getElementById('newWorkerName').value.trim(); if (!workerId || !name) { showAlert('请输入工号和姓名', 'danger'); return; } if (workers.some(w => w.workerId === workerId)) { showAlert(`工号 ${workerId} 已存在`, 'warning'); return; } const newWorker = { workerId, name }; workers.push(newWorker); localStorage.setItem('workers', JSON.stringify(workers)); document.getElementById('newWorkerId').value = ''; document.getElementById('newWorkerName').value = ''; updateWorkersTable(); updateWorkerSelect(); updateWorkerStats(); updateMemoryUsage(); showAlert(`成功添加员工：${name} (${workerId})`, 'success'); }
+    function confirmWorker() { const workerSelect = document.getElementById('workerSelect'); const workerId = workerSelect.value; const workArea = document.getElementById('workAreaSelect').value; if (!workerId) { showAlert('请选择员工', 'danger'); return; } if (!workArea) { showAlert('请选择作业区域', 'danger'); return; } const worker = workers.find(w => w.workerId === workerId); if (!worker) { showAlert('所选员工不存在', 'danger'); return; } document.getElementById('workerInfo').style.display = 'block'; document.getElementById('workerInfo').innerHTML = ` <strong>工号：</strong>${worker.workerId}<br> <strong>姓名：</strong>${worker.name}<br> <strong>作业区域：</strong>${workArea}<br> <span class="text-success">已确认，请填写报工信息</span> `; currentWorkerId = workerId; currentWorkArea = workArea; document.getElementById('currentWorkerId').textContent = worker.workerId; document.getElementById('currentWorkerName').textContent = worker.name; document.getElementById('currentWorkArea').textContent = workArea; document.getElementById('report-tab').disabled = false; bootstrap.Tab.getOrCreateInstance(document.getElementById('report-tab')).show(); }
+    function addNewWorker() { const workerId = document.getElementById('newWorkerId').value.trim(); const name = document.getElementById('newWorkerName').value.trim(); if (!workerId || !name) { showAlert('请输入工号和姓名', 'danger'); return; } if (workers.some(w => w.workerId === workerId)) { showAlert(`工号 ${workerId} 已存在`, 'warning'); return; } const newWorker = { workerId, name }; workers.push(newWorker); updateWorkersTable(); updateWorkerSelect(); updateWorkerStats(); showAlert(`成功添加员工：${name} (${workerId})`, 'success'); document.getElementById('newWorkerId').value = ''; document.getElementById('newWorkerName').value = ''; }
+    function deleteWorker(workerId) { if (confirm('确定要删除该员工吗？')) { workers = workers.filter(w => w.workerId !== workerId); updateWorkersTable(); updateWorkerSelect(); updateWorkerStats(); showAlert('员工已删除', 'success'); } }
     function updateWorkerStats() { document.getElementById('totalWorkersCount').textContent = workers.length; const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30); const activeWorkers = new Set(); reports.forEach(report => { const reportDate = new Date(report.timestamp); if (reportDate > thirtyDaysAgo) { activeWorkers.add(report.workerId); } }); document.getElementById('activeWorkersCount').textContent = activeWorkers.size; const avgReports = workers.length > 0 ? (reports.length / workers.length).toFixed(1) : 0; document.getElementById('avgReports').textContent = avgReports; }
-    function logout() { currentWorkerId = ''; currentWorkArea = ''; document.getElementById('workerInfo').style.display = 'none'; document.getElementById('reportForm').reset(); resetReportForm(); reportTab.disabled = true; tabs.show(document.getElementById('login-tab')); }
     function resetReportForm() { document.getElementById('reportForm').reset(); document.getElementById('productionDate').valueAsDate = new Date(); document.getElementById('matchResult').style.display = 'none'; document.getElementById('materialCode').value = ''; document.getElementById('materialName').value = ''; if (manualInputEnabled) { toggleManualInput(); } if (manualMachineInputEnabled) { toggleManualMachineInput(); } document.getElementById('machineId').value = ''; }
     function toggleManualInput() { const materialCodeInput = document.getElementById('materialCode'); const materialNameInput = document.getElementById('materialName'); const button = document.getElementById('toggleMaterialInputBtn'); manualInputEnabled = !manualInputEnabled; materialCodeInput.readOnly = !manualInputEnabled; materialNameInput.readOnly = !manualInputEnabled; if (manualInputEnabled) { button.innerHTML = '<i class="fas fa-times"></i>'; button.classList.remove('btn-outline-secondary'); button.classList.add('btn-warning'); document.getElementById('matchResult').innerHTML = ` <div class="alert alert-info"> <i class="fas fa-info-circle me-2"></i> 已启用手动输入模式，请直接输入原料编号和名称 </div> `; document.getElementById('matchResult').style.display = 'block'; } else { button.innerHTML = '<i class="fas fa-pencil-alt"></i>'; button.classList.remove('btn-warning'); button.classList.add('btn-outline-secondary'); document.getElementById('matchResult').style.display = 'none'; } }
     function toggleManualMachineInput() { const machineInput = document.getElementById('machineId'); const selectBtn = document.getElementById('selectMachineBtn'); const toggleBtn = document.getElementById('toggleMachineInputBtn'); manualMachineInputEnabled = !manualMachineInputEnabled; machineInput.readOnly = !manualMachineInputEnabled; selectBtn.disabled = manualMachineInputEnabled; if (manualMachineInputEnabled) { toggleBtn.innerHTML = '<i class="fas fa-list"></i>'; toggleBtn.title = '切换回选择列表'; machineInput.placeholder = "请输入设备编号"; } else { toggleBtn.innerHTML = '<i class="fas fa-keyboard"></i>'; toggleBtn.title = "切换手动输入"; machineInput.placeholder = "请输入或选择设备编号"; } }
     function handleMatch() { const greyClothId = document.getElementById('greyClothId').value.trim(); const matchResult = document.getElementById('matchResult'); matchResult.innerHTML = ''; if (!greyClothId || !materialMatches.length) { matchResult.style.display = 'none'; return; } const matches = materialMatches.filter(item => item['坯布编号']?.toString().includes(greyClothId)); if (matches.length === 0) { matchResult.style.display = 'block'; matchResult.innerHTML = ` <div class="alert alert-warning"> <p>未找到匹配的坯布编号</p> <button class="btn btn-sm btn-info mt-2" id="enableManualBtn"> <i class="fas fa-pencil-alt me-1"></i>手动输入原料信息 </button> </div> `; document.getElementById('enableManualBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); return; } matchResult.style.display = 'block'; if (matches.length === 1) { const match = matches[0]; document.getElementById('materialCode').value = match['原料编号'] || ''; document.getElementById('materialName').value = match['原料名称'] || ''; matchResult.innerHTML = ` <div class="alert alert-success"> <p><strong>已匹配到原料信息：</strong></p> <p>坯布编号: ${match['坯布编号'] || ''}</p> <p>原料编号: ${match['原料编号'] || ''}</p> <p>原料名称: ${match['原料名称'] || ''}</p> <button class="btn btn-sm btn-outline-secondary mt-2" id="manualOverrideBtn"> <i class="fas fa-pencil-alt me-1"></i>手动修改原料信息 </button> </div> `; document.getElementById('manualOverrideBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); } else { let tableHTML = ` <div class="alert alert-info">找到 ${matches.length} 条匹配记录，请选择</div> <table class="table table-bordered"> <tr> <th>选择</th> <th>坯布编号</th> <th>原料编号</th> <th>原料名称</th> </tr> `; matches.forEach((m, i) => { tableHTML += ` <tr> <td><button class="btn btn-sm btn-primary select-match" data-index="${i}">选择</button></td> <td>${m['坯布编号']}</td> <td>${m['原料编号']}</td> <td>${m['原料名称']}</td> </tr> `; }); tableHTML += ` <tr> <td colspan="4" class="text-center"> <button class="btn btn-sm btn-outline-info mt-2" id="manualInputOptionBtn"> <i class="fas fa-pencil-alt me-1"></i>手动输入原料信息 </button> </td> </tr> </table>`; matchResult.innerHTML = tableHTML; document.querySelectorAll('.select-match').forEach(btn => { btn.addEventListener('click', () => { const m = matches[btn.dataset.index]; document.getElementById('materialCode').value = m['原料编号'] || ''; document.getElementById('materialName').value = m['原料名称'] || ''; matchResult.innerHTML = ` <div class="alert alert-success"> <p><strong>已选择原料信息：</strong></p> <p>坯布编号: ${m['坯布编号'] || ''}</p> <p>原料编号: ${m['原料编号'] || ''}</p> <p>原料名称: ${m['原料名称'] || ''}</p> <button class="btn btn-sm btn-outline-secondary mt-2" id="manualOverrideBtn"> <i class="fas fa-pencil-alt me-1"></i>手动修改原料信息 </button> </div> `; document.getElementById('manualOverrideBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); }); }); document.getElementById('manualInputOptionBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); } }
-    function handleGreyClothInput() { clearTimeout(debounceTimer); const inputValue = greyClothIdInput.value.trim(); greyClothSuggestions.innerHTML = ''; greyClothSuggestions.style.display = 'none'; if (inputValue.length < 2) { return; } debounceTimer = setTimeout(() => { const uniqueSuggestions = new Set(); materialMatches.forEach(item => { const clothNum = item['坯布编号']?.toString() || ''; if (clothNum.includes(inputValue)) { uniqueSuggestions.add(clothNum); } }); if (uniqueSuggestions.size === 0) { return; } let html = ''; uniqueSuggestions.forEach(suggestion => { const matchIndex = suggestion.indexOf(inputValue); if (matchIndex !== -1) { const before = suggestion.substring(0, matchIndex); const match = suggestion.substring(matchIndex, matchIndex + inputValue.length); const after = suggestion.substring(matchIndex + inputValue.length); html += `<a class="dropdown-item" href="#">${before}<span class="suggestion-highlight">${match}</span>${after}</a>`; } else { html += `<a class="dropdown-item" href="#">${suggestion}</a>`; } }); greyClothSuggestions.innerHTML = html; greyClothSuggestions.style.display = 'block'; greyClothSuggestions.querySelectorAll('.dropdown-item').forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); const text = item.textContent; greyClothIdInput.value = text; greyClothSuggestions.innerHTML = ''; greyClothSuggestions.style.display = 'none'; handleMatch(); }); }); }, 300); }
-    function processExcelFile() { const fileInput = document.getElementById('excelFile'); const file = fileInput.files[0]; const statusEl = document.getElementById('uploadStatus'); if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; } const reader = new FileReader(); reader.onload = async function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' }); if (jsonData.length === 0) { statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>'; return; } const requiredFields = ['坯布编号', '原料编号', '原料名称']; const hasRequiredFields = requiredFields.every(field => Object.keys(jsonData[0]).includes(field)); if (!hasRequiredFields) { statusEl.innerHTML = '<div class="alert alert-danger">Excel文件格式不正确，需要包含列：坯布编号, 原料编号, 原料名称</div>'; return; } const processedData = jsonData.map(item => ({ '坯布编号': item['坯布编号'] || '', '原料编号': item['原料编号'] || '', '原料名称': item['原料名称'] || '' })); materialMatches = processedData; localStorage.setItem('materialMatches', JSON.stringify(processedData)); statusEl.innerHTML = '<div class="alert alert-success">原料匹配表更新成功</div>'; new bootstrap.Modal(document.getElementById('uploadModal')).hide(); updateMemoryUsage(); } catch (error) { console.error('处理Excel文件出错:', error); statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>'; } }; reader.readAsArrayBuffer(file); }
-    function filterSummaryData() { const workerId = document.getElementById('summaryWorkerId').value; const workArea = document.getElementById('summaryWorkArea').value; const operationType = document.getElementById('summaryOperationType').value; const dateFrom = document.getElementById('summaryDateFrom').value; const dateTo = document.getElementById('summaryDateTo').value; filteredReports = reports.filter(report => { const isWorkerMatch = workerId === '' || report.workerId === workerId; const isWorkAreaMatch = workArea === '' || report.workArea === workArea; const isOperationTypeMatch = operationType === '' || report.operationType === operationType; const isDateMatch = (dateFrom === '' || report.productionDate >= dateFrom) && (dateTo === '' || report.productionDate <= dateTo); return isWorkerMatch && isWorkAreaMatch && isOperationTypeMatch && isDateMatch; }); currentPage = 1; updateSummaryTable(); updateSummaryStats(); }
-    async function exportToExcel() { const progressModal = new bootstrap.Modal(document.getElementById('exportProgressModal')); progressModal.show(); const progressBar = document.getElementById('exportProgressBar'); const progressText = document.getElementById('exportProgressText'); const statusEl = document.getElementById('exportStatus'); progressBar.style.width = '0%'; progressText.textContent = '0%'; statusEl.innerHTML = '<div class="alert alert-info">开始导出...</div>'; try { const wb = XLSX.utils.book_new(); const batchSize = 10000; const batchCount = Math.ceil(filteredReports.length / batchSize); if (filteredReports.length <= batchSize) { const ws = XLSX.utils.json_to_sheet(filteredReports); XLSX.utils.book_append_sheet(wb, ws, '报工数据'); progressBar.style.width = '100%'; progressText.textContent = '100%'; statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>'; setTimeout(() => { XLSX.writeFile(wb, '报工数据.xlsx'); statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>'; }, 500); return; } statusEl.innerHTML = `<div class="alert alert-info">正在处理大量数据（${filteredReports.length}条），请稍候...</div>`; const processBatch = async (batchIndex) => { const start = batchIndex * batchSize; const end = Math.min(start + batchSize, filteredReports.length); const batchData = filteredReports.slice(start, end); const ws = XLSX.utils.json_to_sheet(batchData); const sheetName = `报工数据${batchIndex + 1}`; XLSX.utils.book_append_sheet(wb, ws, sheetName); const progress = Math.round(((batchIndex + 1) / batchCount) * 100); progressBar.style.width = `${progress}%`; progressText.textContent = `${progress}%`; if (batchIndex < batchCount - 1) { await new Promise(resolve => setTimeout(resolve, 0)); await processBatch(batchIndex + 1); } }; await processBatch(0); statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>'; setTimeout(() => { XLSX.writeFile(wb, '报工数据.xlsx'); statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>'; }, 500); } catch (error) { console.error('导出Excel失败:', error); statusEl.innerHTML = `<div class="alert alert-danger">导出失败: ${error.message}</div>`; } }
-    function updateWorkersTable() { const tableBody = document.getElementById('workersTableBody'); tableBody.innerHTML = ''; workers.forEach((worker, index) => { const row = document.createElement('tr'); const workerReports = reports.filter(report => report.workerId === worker.workerId); const reportCount = workerReports.length; let lastReportDate = '无记录'; if (reportCount > 0) { const dates = workerReports.map(r => new Date(r.timestamp).getTime()); const maxDate = new Date(Math.max(...dates)); lastReportDate = maxDate.toISOString().split('T')[0]; } row.innerHTML = ` <td>${index + 1}</td> <td>${worker.workerId}</td> <td>${worker.name}</td> <td>${reportCount}</td> <td>${lastReportDate}</td> <td> <button class="btn btn-sm btn-danger delete-worker" data-worker-id="${worker.workerId}"> <i class="fas fa-trash-alt"></i> 删除 </button> </td> `; tableBody.appendChild(row); }); if (workers.length === 0) { tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暂无员工数据</td></tr>'; } }
-    async function deleteWorker(workerId) { if (confirm('确定要删除该员工吗？报工数据将保留。')) { workers = workers.filter(w => w.workerId !== workerId); localStorage.setItem('workers', JSON.stringify(workers)); updateWorkersTable(); updateWorkerSelect(); updateWorkerStats(); updateSummaryStats(); updateMemoryUsage(); showAlert('员工已删除，报工数据保留', 'success'); } }
-    function updateSummaryTable() { const tableBody = document.getElementById('summaryTableBody'); tableBody.innerHTML = ''; const totalRecords = filteredReports.length; const totalPages = Math.ceil(totalRecords / itemsPerPage); document.getElementById('totalRecords').textContent = totalRecords; document.getElementById('totalPages').textContent = totalPages; document.getElementById('currentPage').textContent = currentPage; document.getElementById('prevPageBtn').disabled = currentPage === 1; document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0; if (totalRecords === 0) { tableBody.innerHTML = '<tr><td colspan="13" class="text-center">暂无数据</td></tr>'; return; } const startIndex = (currentPage - 1) * itemsPerPage; const endIndex = Math.min(startIndex + itemsPerPage, totalRecords); const currentPageData = filteredReports.slice(startIndex, endIndex); currentPageData.forEach((report, index) => { const row = document.createElement('tr'); const workerExists = workers.some(w => w.workerId === report.workerId); const globalIndex = startIndex + index + 1; if (!workerExists) { row.classList.add('deleted-worker'); } row.innerHTML = ` <td>${globalIndex}</td> <td>${report.workerId}</td> <td>${report.workerName}</td> <td>${report.workArea}</td> <td>${report.machineId}</td> <td>${report.greyClothId}</td> <td>${report.materialName}</td> <td>${report.operationType}</td> <td>${report.grainCount}</td> <td>${report.grainWeight}</td> <td>${report.totalWeight.toFixed(1)}</td> <td>${report.productionDate}</td> <td> <div class="action-buttons"> <button class="btn btn-sm btn-info edit-report" data-report-id="${report.reportId}"> <i class="fas fa-edit"></i> </button> <button class="btn btn-sm btn-danger delete-report" data-report-id="${report.reportId}"> <i class="fas fa-trash-alt"></i> </button> </div> </td> `; tableBody.appendChild(row); }); }
-    function goToPrevPage() { if (currentPage > 1) { currentPage--; updateSummaryTable(); } }
-    function goToNextPage() { const totalPages = Math.ceil(filteredReports.length / itemsPerPage); if (currentPage < totalPages) { currentPage++; updateSummaryTable(); } }
-    function editReport(reportId) { const report = reports.find(r => r.reportId === reportId); if (!report) return; document.getElementById('editReportId').value = report.reportId; document.getElementById('editWorkerId').value = report.workerId; document.getElementById('editWorkerName').value = report.workerName; document.getElementById('editWorkArea').value = report.workArea; document.getElementById('editMachineId').value = report.machineId; document.getElementById('editGreyClothId').value = report.greyClothId; document.getElementById('editMaterialName').value = report.materialName; document.getElementById('editOperationType').value = report.operationType; document.getElementById('editGrainCount').value = report.grainCount; document.getElementById('editGrainWeight').value = report.grainWeight; document.getElementById('editProductionDate').value = report.productionDate; new bootstrap.Modal(document.getElementById('editReportModal')).show(); }
-    async function saveReportChanges() { /*... 此处省略编辑逻辑，未来可添加后端支持 ...*/ showAlert('编辑功能待后端支持', 'info'); }
-    async function deleteReport(reportId) { /*... 此处省略删除逻辑，未来可添加后端支持 ...*/ showAlert('删除功能待后端支持', 'info');}
-    async function deleteByDate() { /*... 此处省略按日期删除逻辑，未来可添加后端支持 ...*/ showAlert('按日期删除功能待后端支持', 'info');}
-    function updateSummaryStats() { const totalReports = reports.length; const totalGrains = reports.reduce((sum, report) => sum + report.grainCount, 0); const totalWorkers = new Set(reports.map(report => report.workerId)).size; const totalWeight = reports.reduce((sum, report) => sum + report.totalWeight, 0).toFixed(1); document.getElementById('totalReports').textContent = totalReports; document.getElementById('totalGrains').textContent = totalGrains; document.getElementById('totalWorkers').textContent = totalWorkers; document.getElementById('totalWeight').textContent = totalWeight; updateSummaryTable(); updateOperationTypeChart(); updateWorkerRankingChart(); const summaryWorkerId = document.getElementById('summaryWorkerId'); summaryWorkerId.innerHTML = '<option value="">全部工号</option>'; const uniqueWorkerIds = [...new Set(reports.map(report => report.workerId))]; uniqueWorkerIds.forEach(id => { const report = reports.find(r => r.workerId === id); const option = document.createElement('option'); option.value = id; option.textContent = `${id} - ${report ? report.workerName : '未知'}`; summaryWorkerId.appendChild(option); }); }
-    function updateOperationTypeChart() { const operationTypeCounts = { '上纱': 0, '下纱': 0 }; reports.forEach(report => { if(operationTypeCounts[report.operationType] !== undefined) operationTypeCounts[report.operationType]++; }); const labels = Object.keys(operationTypeCounts); const data = Object.values(operationTypeCounts); if (typeChartInstance) { typeChartInstance.destroy(); } const ctx = document.getElementById('operationTypeChart').getContext('2d'); typeChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#2c6fbb', '#6c757d'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', }, tooltip: { callbacks: { label: function(context) { const label = context.label || ''; const value = context.raw || 0; const total = context.dataset.data.reduce((a, b) => a + b, 0); if (total === 0) return `${label}: 0 (0%)`; const percentage = Math.round((value / total) * 100); return `${label}: ${value} (${percentage}%)`; } } } } } }); }
-    function updateWorkerRankingChart() { const workerReportCounts = {}; reports.forEach(report => { if (!workerReportCounts[report.workerId]) { workerReportCounts[report.workerId] = { name: report.workerName, count: 0 }; } workerReportCounts[report.workerId].count++; }); const sortedWorkers = Object.values(workerReportCounts).sort((a, b) => b.count - a.count).slice(0, 7); const labels = sortedWorkers.map(worker => worker.name); const data = sortedWorkers.map(worker => worker.count); if (rankingChartInstance) { rankingChartInstance.destroy(); } const ctx = document.getElementById('workerRankingChart').getContext('2d'); rankingChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: '报工次数', data: data, backgroundColor: '#2c6fbb', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: '报工次数' } }, x: { title: { display: true, text: '员工姓名' } } } } }); }
-    async function clearAllData() { /*... 此处省略清空逻辑，未来可添加后端支持 ...*/ showAlert('清空功能待后端支持', 'info');}
-    function exportAllData() { const wb = XLSX.utils.book_new(); const ws1 = XLSX.utils.json_to_sheet(workers); XLSX.utils.book_append_sheet(wb, ws1, '员工数据'); const ws2 = XLSX.utils.json_to_sheet(reports); XLSX.utils.book_append_sheet(wb, ws2, '报工记录'); const ws3 = XLSX.utils.json_to_sheet(materialMatches); XLSX.utils.book_append_sheet(wb, ws3, '原料匹配表'); const ws4 = XLSX.utils.json_to_sheet(machines); XLSX.utils.book_append_sheet(wb, ws4, '设备数据'); XLSX.writeFile(wb, '报工系统备份_' + new Date().toISOString().slice(0, 10) + '.xlsx'); showAlert('所有数据已导出', 'success'); }
-    async function generateTestData() { /*... 省略测试数据生成逻辑 ...*/ showAlert('测试数据生成功能待后端支持', 'info');}
-    function showAlert(message, type) { document.querySelectorAll('.alert-floating').forEach(el => el.remove()); const alertDiv = document.createElement('div'); alertDiv.classList.add('alert', `alert-${type}`, 'alert-floating'); alertDiv.innerHTML = ` <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i> ${message} `; document.body.appendChild(alertDiv); setTimeout(() => { alertDiv.remove(); }, 3000); }
-    
-    // ########### START: Machine Management Functions (Backend Integrated) ###########
-    
-    // 添加新设备（调用后端POST）
-    async function addNewMachine() {
-        const area = document.getElementById('newMachineArea').value;
-        const machineId = document.getElementById('newMachineId').value.trim();
-        const desc = document.getElementById('newMachineDesc').value.trim();
-
-        if (!area || !machineId) {
-            showAlert('作业区域和设备编号不能为空', 'danger');
-            return;
-        }
-
-        // 准备发送到后端的数据 (使用 snake_case 匹配数据库)
-        const newMachine = { area: area, machine_id: machineId, desc: desc };
-
-        try {
-            showLoading();
-            const response = await fetch('/.netlify/functions/machines', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newMachine)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                if (errorData.error && errorData.error.includes('duplicate key')) {
-                    throw new Error(`设备编号 ${machineId} 已存在`);
-                }
-                throw new Error(errorData.error || '添加失败');
-            }
-
-            showAlert(`成功添加设备：${machineId}`, 'success');
-            document.getElementById('newMachineId').value = '';
-            document.getElementById('newMachineDesc').value = '';
-            await loadMachinesFromBackend(); // 操作成功后，从后端重新加载数据
-        } catch (error) {
-            showAlert(`添加失败: ${error.message}`, 'danger');
-        } finally {
-            hideLoading();
-        }
-    }
-
-    // 删除指定设备（调用后端DELETE）
-    async function deleteMachine(machineId) {
-        if (!confirm(`确定要删除设备 ${machineId} 吗？`)) return;
-
-        try {
-            showLoading();
-            const response = await fetch(`/.netlify/functions/machines?machine_id=${machineId}`, {
-                method: 'DELETE'
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.error || '删除失败');
-            }
-
-            showAlert(`成功删除设备：${machineId}`, 'success');
-            await loadMachinesFromBackend(); // 操作成功后，从后端重新加载数据
-        } catch (error) {
-            showAlert(`删除失败: ${error.message}`, 'danger');
-        } finally {
-            hideLoading();
-        }
-    }
-
-    // 删除所有设备（循环调用DELETE）
-    async function deleteAllMachines() {
-        if (!confirm(`警告：此操作将删除所有设备数据，且无法恢复。确定要继续吗？`)) return;
-
-        showLoading();
-        try {
-            const deletePromises = machines.map(machine => 
-                fetch(`/.netlify/functions/machines?machine_id=${machine.machineId}`, {
-                    method: 'DELETE'
-                })
-            );
-            
-            const results = await Promise.allSettled(deletePromises);
-            
-            const successfulDeletes = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
-            const failedDeletes = results.length - successfulDeletes;
-
-            if (failedDeletes > 0) {
-                showAlert(`成功删除 ${successfulDeletes} 台设备，${failedDeletes} 台删除失败。`, 'warning');
-            } else {
-                showAlert(`已成功删除所有 ${successfulDeletes} 台设备。`, 'success');
-            }
-            
-            await loadMachinesFromBackend(); // 刷新列表
-        } catch (error) {
-            showAlert(`删除过程中发生错误: ${error.message}`, 'danger');
-        } finally {
-            hideLoading();
-        }
-    }
-    
-    // 更新设备列表UI
-    function updateMachinesTable() {
-        const tableBody = document.getElementById('machinesTableBody');
-        const filterValue = document.getElementById('machineAreaFilter').value;
-        tableBody.innerHTML = '';
-        
-        const machinesToDisplay = machines.filter(machine => filterValue === '' || machine.area === filterValue);
-
-        machinesToDisplay.forEach((machine, index) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${machine.area}</td>
-                <td>${machine.machineId}</td>
-                <td>${machine.desc || ''}</td>
-                <td>
-                    <button class="btn btn-sm btn-danger delete-machine" data-machine-id="${machine.machineId}">
-                        <i class="fas fa-trash-alt"></i> 删除
-                    </button>
-                </td>
-            `;
-            tableBody.appendChild(row);
-        });
-
-        if (machinesToDisplay.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">暂无设备数据</td></tr>';
-        }
-    }
-
-    // 按区域筛选设备
-    function filterMachinesTable() {
-        updateMachinesTable();
-    }
-    
-    // 更新设备统计信息
-    function updateMachineStats() {
-        document.getElementById('totalMachinesCount').textContent = machines.length;
-        const areas = new Set(machines.map(m => m.area));
-        document.getElementById('totalAreasCount').textContent = areas.size;
-        const avg = areas.size > 0 ? (machines.length / areas.size).toFixed(1) : 0;
-        document.getElementById('avgMachinesPerArea').textContent = avg;
-    }
-    
-    // 预览待导入的设备Excel文件
-    function previewImportMachines() {
-        const fileInput = document.getElementById('importMachinesFile');
+    function handleGreyClothInput() { clearTimeout(debounceTimer); const inputValue = document.getElementById('greyClothId').value.trim(); const greyClothSuggestions = document.getElementById('greyClothSuggestions'); greyClothSuggestions.innerHTML = ''; greyClothSuggestions.style.display = 'none'; if (inputValue.length < 2) { return; } debounceTimer = setTimeout(() => { const uniqueSuggestions = new Set(); materialMatches.forEach(item => { const clothNum = item['坯布编号']?.toString() || ''; if (clothNum.includes(inputValue)) { uniqueSuggestions.add(clothNum); } }); if (uniqueSuggestions.size === 0) { return; } let html = ''; uniqueSuggestions.forEach(suggestion => { const matchIndex = suggestion.indexOf(inputValue); if (matchIndex !== -1) { const before = suggestion.substring(0, matchIndex); const match = suggestion.substring(matchIndex, matchIndex + inputValue.length); const after = suggestion.substring(matchIndex + inputValue.length); html += `<a class="dropdown-item" href="#">${before}<span class="suggestion-highlight">${match}</span>${after}</a>`; } else { html += `<a class="dropdown-item" href="#">${suggestion}</a>`; } }); greyClothSuggestions.innerHTML = html; greyClothSuggestions.style.display = 'block'; greyClothSuggestions.querySelectorAll('.dropdown-item').forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); document.getElementById('greyClothId').value = item.textContent; greyClothSuggestions.innerHTML = ''; greyClothSuggestions.style.display = 'none'; handleMatch(); }); }); }, 300); }
+    async function processExcelFile() {
+        const fileInput = document.getElementById('excelFile');
         const file = fileInput.files[0];
-        const statusEl = document.getElementById('importMachinesStatus');
-        const previewTable = document.getElementById('importMachinesPreview').querySelector('tbody');
-        if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; }
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const firstSheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[firstSheetName];
-                const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ''});
-                
-                if (jsonData.length <= 1) {
-                    previewTable.innerHTML = '<tr><td colspan="3" class="text-center">Excel文件中没有数据</td></tr>';
-                    return;
-                }
-
-                const requiredFields = ['作业区域', '设备编号'];
-                const header = jsonData[0];
-                const hasRequiredFields = requiredFields.every(field => header.includes(field));
-                if (!hasRequiredFields) {
-                    previewTable.innerHTML = `<tr><td colspan="3" class="text-center">文件格式不正确，需要包含列：${requiredFields.join(', ')}</td></tr>`;
-                    return;
-                }
-
-                let html = '';
-                for (let i = 1; i < Math.min(6, jsonData.length); i++) {
-                    const row = jsonData[i];
-                    html += `<tr>
-                        <td>${row[header.indexOf('作业区域')] || ''}</td>
-                        <td>${row[header.indexOf('设备编号')] || ''}</td>
-                        <td>${row[header.indexOf('设备描述')] || ''}</td>
-                    </tr>`;
-                }
-                if (jsonData.length > 6) {
-                    html += `<tr><td colspan="3" class="text-center">...只显示前5行，共${jsonData.length - 1}行数据</td></tr>`;
-                }
-                previewTable.innerHTML = html;
-                statusEl.innerHTML = `<div class="alert alert-success">检测到 ${jsonData.length - 1} 条设备记录</div>`;
-            } catch (error) {
-                console.error('预览设备Excel出错:', error);
-                previewTable.innerHTML = '<tr><td colspan="3" class="text-center">处理文件时出错</td></tr>';
-                statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>';
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-    // 处理批量导入（解析Excel并循环调用POST）
-    async function processImportMachinesFile() {
-        const fileInput = document.getElementById('importMachinesFile');
-        const file = fileInput.files[0];
-        const statusEl = document.getElementById('importMachinesStatus');
-        if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; }
+        if (!file) { showAlert('请选择Excel文件', 'danger'); return; }
 
         showLoading();
         try {
@@ -2030,112 +1648,99 @@
             const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' });
 
             if (jsonData.length === 0) {
-                statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>';
-                hideLoading();
+                showAlert('Excel文件中没有数据', 'warning');
                 return;
             }
 
-            const requiredFields = ['作业区域', '设备编号'];
-            const firstRowKeys = Object.keys(jsonData[0]);
-            const hasRequiredFields = requiredFields.every(field => firstRowKeys.includes(field));
-
-            if (!hasRequiredFields) {
-                statusEl.innerHTML = `<div class="alert alert-danger">Excel文件格式不正确，需要包含列：${requiredFields.join(', ')}</div>`;
-                hideLoading();
+            const requiredFields = ['坯布编号', '原料编号', '原料名称'];
+            if (!requiredFields.every(field => Object.keys(jsonData[0]).includes(field))) {
+                showAlert('Excel文件格式不正确，需要包含列：坯布编号, 原料编号, 原料名称', 'danger');
                 return;
             }
-
-            const machinesToImport = jsonData.map(item => ({
-                area: item['作业区域'],
-                machine_id: item['设备编号']?.toString().trim(),
-                desc: item['设备描述'] || ''
-            })).filter(item => item.area && item.machine_id);
-
-            const importPromises = machinesToImport.map(machine => 
-                fetch('/.netlify/functions/machines', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(machine)
-                })
-            );
             
-            const results = await Promise.allSettled(importPromises);
-            const successfulImports = results.filter(r => r.status === 'fulfilled' && r.value.ok).length;
-            const failedImports = results.length - successfulImports;
+            const processedData = jsonData.map(item => ({
+                grey_cloth_id: item['坯布编号'] || '',
+                material_id: item['原料编号'] || '',
+                material_name: item['原料名称'] || ''
+            }));
 
-            if (failedImports > 0) {
-                showAlert(`成功导入 ${successfulImports} 台设备，${failedImports} 台失败。`, 'warning');
-            } else {
-                showAlert(`成功导入所有 ${successfulImports} 台设备。`, 'success');
+            const response = await fetch('/.netlify/functions/matches', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(processedData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '上传失败');
             }
 
-            bootstrap.Modal.getInstance(document.getElementById('importMachinesModal'))?.hide();
-            await loadMachinesFromBackend();
+            showAlert('原料匹配表已成功更新到数据库！', 'success');
+            await loadMatchesFromBackend(); 
+            bootstrap.Modal.getInstance(document.getElementById('uploadModal'))?.hide();
         } catch (error) {
-            console.error('批量导入设备失败:', error);
-            showAlert(`处理文件时出错: ${error.message}`, 'danger');
+            console.error('处理或上传Excel文件出错:', error);
+            showAlert(`处理失败: ${error.message}`, 'danger');
         } finally {
             hideLoading();
         }
     }
+    async function clearAllMatches() {
+        if (!confirm('警告：此操作将清空服务器上所有的原料匹配数据，且无法恢复。确定要继续吗？')) {
+            return;
+        }
+
+        showLoading();
+        try {
+            const response = await fetch('/.netlify/functions/matches', {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '清空失败');
+            }
+
+            showAlert('原料匹配表已成功清空！', 'success');
+            await loadMatchesFromBackend();
+
+        } catch (error) {
+            console.error('清空原料匹配表失败:', error);
+            showAlert(`清空失败: ${error.message}`, 'danger');
+        } finally {
+            hideLoading();
+        }
+    }
+    function filterSummaryData() { const workerId = document.getElementById('summaryWorkerId').value; const workArea = document.getElementById('summaryWorkArea').value; const operationType = document.getElementById('summaryOperationType').value; const dateFrom = document.getElementById('summaryDateFrom').value; const dateTo = document.getElementById('summaryDateTo').value; filteredReports = reports.filter(report => { const isWorkerMatch = workerId === '' || report.workerId === workerId; const isWorkAreaMatch = workArea === '' || report.workArea === workArea; const isOperationTypeMatch = operationType === '' || report.operationType === operationType; const isDateMatch = (dateFrom === '' || report.productionDate >= dateFrom) && (dateTo === '' || report.productionDate <= dateTo); return isWorkerMatch && isWorkAreaMatch && isOperationTypeMatch && isDateMatch; }); currentPage = 1; updateSummaryTable(); updateSummaryStats(); }
+    async function exportToExcel() { const progressModal = new bootstrap.Modal(document.getElementById('exportProgressModal')); progressModal.show(); const progressBar = document.getElementById('exportProgressBar'); const progressText = document.getElementById('exportProgressText'); const statusEl = document.getElementById('exportStatus'); progressBar.style.width = '0%'; progressText.textContent = '0%'; statusEl.innerHTML = '<div class="alert alert-info">开始导出...</div>'; try { const wb = XLSX.utils.book_new(); const batchSize = 10000; const batchCount = Math.ceil(filteredReports.length / batchSize); if (filteredReports.length <= batchSize) { const ws = XLSX.utils.json_to_sheet(filteredReports); XLSX.utils.book_append_sheet(wb, ws, '报工数据'); progressBar.style.width = '100%'; progressText.textContent = '100%'; statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>'; setTimeout(() => { XLSX.writeFile(wb, '报工数据.xlsx'); statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>'; }, 500); return; } statusEl.innerHTML = `<div class="alert alert-info">正在处理大量数据（${filteredReports.length}条），请稍候...</div>`; const processBatch = async (batchIndex) => { const start = batchIndex * batchSize; const end = Math.min(start + batchSize, filteredReports.length); const batchData = filteredReports.slice(start, end); const ws = XLSX.utils.json_to_sheet(batchData); const sheetName = `报工数据${batchIndex + 1}`; XLSX.utils.book_append_sheet(wb, ws, sheetName); const progress = Math.round(((batchIndex + 1) / batchCount) * 100); progressBar.style.width = `${progress}%`; progressText.textContent = `${progress}%`; if (batchIndex < batchCount - 1) { await new Promise(resolve => setTimeout(resolve, 0)); await processBatch(batchIndex + 1); } }; await processBatch(0); statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>'; setTimeout(() => { XLSX.writeFile(wb, '报工数据.xlsx'); statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>'; }, 500); } catch (error) { console.error('导出Excel失败:', error); statusEl.innerHTML = `<div class="alert alert-danger">导出失败: ${error.message}</div>`; } }
+    function updateWorkersTable() { const tableBody = document.getElementById('workersTableBody'); tableBody.innerHTML = ''; workers.forEach((worker, index) => { const row = document.createElement('tr'); const workerReports = reports.filter(report => report.workerId === worker.workerId); const reportCount = workerReports.length; let lastReportDate = '无记录'; if (reportCount > 0) { const dates = workerReports.map(r => new Date(r.timestamp).getTime()); const maxDate = new Date(Math.max(...dates)); lastReportDate = maxDate.toISOString().split('T')[0]; } row.innerHTML = ` <td>${index + 1}</td> <td>${worker.workerId}</td> <td>${worker.name}</td> <td>${reportCount}</td> <td>${lastReportDate}</td> <td> <button class="btn btn-sm btn-danger delete-worker" data-worker-id="${worker.workerId}"> <i class="fas fa-trash-alt"></i> 删除 </button> </td> `; tableBody.appendChild(row); }); if (workers.length === 0) { tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暂无员工数据</td></tr>'; } }
+    function updateSummaryTable() { const tableBody = document.getElementById('summaryTableBody'); tableBody.innerHTML = ''; const totalRecords = filteredReports.length; const totalPages = Math.ceil(totalRecords / itemsPerPage); document.getElementById('totalRecords').textContent = totalRecords; document.getElementById('totalPages').textContent = totalPages; document.getElementById('currentPage').textContent = currentPage; document.getElementById('prevPageBtn').disabled = currentPage === 1; document.getElementById('nextPageBtn').disabled = currentPage === totalPages || totalPages === 0; if (totalRecords === 0) { tableBody.innerHTML = '<tr><td colspan="13" class="text-center">暂无数据</td></tr>'; return; } const startIndex = (currentPage - 1) * itemsPerPage; const endIndex = Math.min(startIndex + itemsPerPage, totalRecords); const currentPageData = filteredReports.slice(startIndex, endIndex); currentPageData.forEach((report, index) => { const row = document.createElement('tr'); const workerExists = workers.some(w => w.workerId === report.workerId); const globalIndex = startIndex + index + 1; if (!workerExists) { row.classList.add('deleted-worker'); } row.innerHTML = ` <td>${globalIndex}</td> <td>${report.workerId}</td> <td>${report.workerName}</td> <td>${report.workArea}</td> <td>${report.machineId}</td> <td>${report.greyClothId}</td> <td>${report.materialName}</td> <td>${report.operationType}</td> <td>${report.grainCount}</td> <td>${report.grainWeight}</td> <td>${report.totalWeight.toFixed(1)}</td> <td>${report.productionDate}</td> <td> <div class="action-buttons"> <button class="btn btn-sm btn-info edit-report" data-report-id="${report.reportId}"> <i class="fas fa-edit"></i> </button> <button class="btn btn-sm btn-danger delete-report" data-report-id="${report.reportId}"> <i class="fas fa-trash-alt"></i> </button> </div> </td> `; tableBody.appendChild(row); }); }
+    function goToPrevPage() { if (currentPage > 1) { currentPage--; updateSummaryTable(); } }
+    function goToNextPage() { const totalPages = Math.ceil(filteredReports.length / itemsPerPage); if (currentPage < totalPages) { currentPage++; updateSummaryTable(); } }
+    function editReport(reportId) { const report = reports.find(r => r.reportId === reportId); if (!report) return; document.getElementById('editReportId').value = report.reportId; document.getElementById('editWorkerId').value = report.workerId; document.getElementById('editWorkerName').value = report.workerName; document.getElementById('editWorkArea').value = report.workArea; document.getElementById('editMachineId').value = report.machineId; document.getElementById('editGreyClothId').value = report.greyClothId; document.getElementById('editMaterialName').value = report.materialName; document.getElementById('editOperationType').value = report.operationType; document.getElementById('editGrainCount').value = report.grainCount; document.getElementById('editGrainWeight').value = report.grainWeight; document.getElementById('editProductionDate').value = report.productionDate; new bootstrap.Modal(document.getElementById('editReportModal')).show(); }
+    async function saveReportChanges() { showAlert('编辑功能待后端支持', 'info'); }
+    async function deleteReport(reportId) { showAlert('删除功能待后端支持', 'info');}
+    async function deleteByDate() { showAlert('按日期删除功能待后端支持', 'info');}
+    function updateSummaryStats() { const totalReports = reports.length; const totalGrains = reports.reduce((sum, report) => sum + report.grainCount, 0); const totalWorkers = new Set(reports.map(report => report.workerId)).size; const totalWeight = reports.reduce((sum, report) => sum + report.totalWeight, 0).toFixed(1); document.getElementById('totalReports').textContent = totalReports; document.getElementById('totalGrains').textContent = totalGrains; document.getElementById('totalWorkers').textContent = totalWorkers; document.getElementById('totalWeight').textContent = totalWeight; updateSummaryTable(); updateOperationTypeChart(); updateWorkerRankingChart(); const summaryWorkerId = document.getElementById('summaryWorkerId'); summaryWorkerId.innerHTML = '<option value="">全部工号</option>'; const uniqueWorkerIds = [...new Set(reports.map(report => report.workerId))]; uniqueWorkerIds.forEach(id => { const report = reports.find(r => r.workerId === id); const option = document.createElement('option'); option.value = id; option.textContent = `${id} - ${report ? report.workerName : '未知'}`; summaryWorkerId.appendChild(option); }); }
+    function updateOperationTypeChart() { const operationTypeCounts = { '上纱': 0, '下纱': 0 }; reports.forEach(report => { if(operationTypeCounts[report.operationType] !== undefined) operationTypeCounts[report.operationType]++; }); const labels = Object.keys(operationTypeCounts); const data = Object.values(operationTypeCounts); if (typeChartInstance) { typeChartInstance.destroy(); } const ctx = document.getElementById('operationTypeChart').getContext('2d'); typeChartInstance = new Chart(ctx, { type: 'doughnut', data: { labels: labels, datasets: [{ data: data, backgroundColor: ['#2c6fbb', '#6c757d'], borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'top', }, tooltip: { callbacks: { label: function(context) { const label = context.label || ''; const value = context.raw || 0; const total = context.dataset.data.reduce((a, b) => a + b, 0); if (total === 0) return `${label}: 0 (0%)`; const percentage = Math.round((value / total) * 100); return `${label}: ${value} (${percentage}%)`; } } } } } }); }
+    function updateWorkerRankingChart() { const workerReportCounts = {}; reports.forEach(report => { if (!workerReportCounts[report.workerId]) { workerReportCounts[report.workerId] = { name: report.workerName, count: 0 }; } workerReportCounts[report.workerId].count++; }); const sortedWorkers = Object.values(workerReportCounts).sort((a, b) => b.count - a.count).slice(0, 7); const labels = sortedWorkers.map(worker => worker.name); const data = sortedWorkers.map(worker => worker.count); if (rankingChartInstance) { rankingChartInstance.destroy(); } const ctx = document.getElementById('workerRankingChart').getContext('2d'); rankingChartInstance = new Chart(ctx, { type: 'bar', data: { labels: labels, datasets: [{ label: '报工次数', data: data, backgroundColor: '#2c6fbb', borderWidth: 1 }] }, options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, title: { display: true, text: '报工次数' } }, x: { title: { display: true, text: '员工姓名' } } } } }); }
+    async function clearAllData() { showAlert('清空功能待后端支持', 'info');}
+    function exportAllData() { const wb = XLSX.utils.book_new(); const ws1 = XLSX.utils.json_to_sheet(workers); XLSX.utils.book_append_sheet(wb, ws1, '员工数据'); const ws2 = XLSX.utils.json_to_sheet(reports); XLSX.utils.book_append_sheet(wb, ws2, '报工记录'); const ws3 = XLSX.utils.json_to_sheet(materialMatches); XLSX.utils.book_append_sheet(wb, ws3, '原料匹配表'); const ws4 = XLSX.utils.json_to_sheet(machines.map(m => ({'作业区域': m.area, '设备编号': m.machineId, '设备描述': m.desc}))); XLSX.utils.book_append_sheet(wb, ws4, '设备数据'); XLSX.writeFile(wb, '报工系统备份_' + new Date().toISOString().slice(0, 10) + '.xlsx'); showAlert('所有数据已导出', 'success'); }
+    async function generateTestData() { showAlert('测试数据生成功能待后端支持', 'info');}
+    function showAlert(message, type) { document.querySelectorAll('.alert-floating').forEach(el => el.remove()); const alertDiv = document.createElement('div'); alertDiv.classList.add('alert', `alert-${type}`, 'alert-floating'); alertDiv.innerHTML = ` <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'} me-2"></i> ${message} `; document.body.appendChild(alertDiv); setTimeout(() => { alertDiv.remove(); }, 3000); }
     
-    // 打开设备选择弹窗
-    function openMachineSelectModal() {
-        if (manualMachineInputEnabled) {
-            showAlert('请先切换回选择列表模式', 'warning');
-            return;
-        }
-        if (!currentWorkArea) {
-            showAlert('请先登录并选择作业区域', 'warning');
-            return;
-        }
-        document.getElementById('machineSearchInput').value = '';
-        updateMachineModalList();
-        new bootstrap.Modal(document.getElementById('machineSelectModal')).show();
-    }
-
-    // 更新设备选择弹窗的列表
-    function updateMachineModalList() {
-        const listElement = document.getElementById('machineSelectList');
-        const searchInput = document.getElementById('machineSearchInput').value.toLowerCase();
-        const countDisplay = document.getElementById('machineModalCount');
-        
-        let filteredMachines = machines.filter(m => m.area === currentWorkArea);
-
-        if (searchInput) {
-            filteredMachines = filteredMachines.filter(m =>
-                m.machineId.toLowerCase().includes(searchInput) ||
-                (m.desc && m.desc.toLowerCase().includes(searchInput))
-            );
-        }
-        
-        countDisplay.textContent = filteredMachines.length;
-        if (filteredMachines.length === 0) {
-            listElement.innerHTML = '<div class="text-center text-muted">暂无匹配的设备</div>';
-            return;
-        }
-
-        filteredMachines.sort((a, b) => a.machineId.localeCompare(b.machineId, undefined, { numeric: true }));
-        
-        let html = '';
-        const selectedMachineId = document.getElementById('machineId').value;
-        filteredMachines.forEach(machine => {
-            const isSelected = machine.machineId === selectedMachineId;
-            const descText = machine.desc ? `<div class="machine-modal-desc">${machine.desc}</div>` : '';
-            html += `
-                <div class="machine-modal-item ${isSelected ? 'selected' : ''}" data-machine-id="${machine.machineId}">
-                    <div class="machine-modal-id">${machine.machineId}</div>
-                    ${descText}
-                </div>
-            `;
-        });
-        listElement.innerHTML = html;
-    }
-    
-    // 从弹窗选择设备
-    function selectMachine(machineId) {
-        document.getElementById('machineId').value = machineId;
-    }
+    // ########### START: Machine Management Functions (Backend Integrated) ###########
+    async function addNewMachine() { const area = document.getElementById('newMachineArea').value; const machineId = document.getElementById('newMachineId').value.trim(); const desc = document.getElementById('newMachineDesc').value.trim(); if (!area || !machineId) { showAlert('作业区域和设备编号不能为空', 'danger'); return; } const newMachine = { area: area, machine_id: machineId, desc: desc }; try { showLoading(); const response = await fetch('/.netlify/functions/machines', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(newMachine) }); if (!response.ok) { const errorData = await response.json(); if (errorData.error && errorData.error.includes('duplicate key')) { throw new Error(`设备编号 ${machineId} 已存在`); } throw new Error(errorData.error || '添加失败'); } showAlert(`成功添加设备：${machineId}`, 'success'); document.getElementById('newMachineId').value = ''; document.getElementById('newMachineDesc').value = ''; await loadMachinesFromBackend(); } catch (error) { showAlert(`添加失败: ${error.message}`, 'danger'); } finally { hideLoading(); } }
+    async function deleteMachine(machineId) { if (!confirm(`确定要删除设备 ${machineId} 吗？`)) return; try { showLoading(); const response = await fetch(`/.netlify/functions/machines?machine_id=${machineId}`, { method: 'DELETE' }); if (!response.ok) { const errorData = await response.json(); throw new Error(errorData.error || '删除失败'); } showAlert(`成功删除设备：${machineId}`, 'success'); await loadMachinesFromBackend(); } catch (error) { showAlert(`删除失败: ${error.message}`, 'danger'); } finally { hideLoading(); } }
+    async function deleteAllMachines() { if (!confirm(`警告：此操作将删除所有设备数据，且无法恢复。确定要继续吗？`)) return; showLoading(); try { const deletePromises = machines.map(machine => fetch(`/.netlify/functions/machines?machine_id=${machine.machineId}`, { method: 'DELETE' })); const results = await Promise.allSettled(deletePromises); const successfulDeletes = results.filter(r => r.status === 'fulfilled' && r.value.ok).length; const failedDeletes = results.length - successfulDeletes; if (failedDeletes > 0) { showAlert(`成功删除 ${successfulDeletes} 台设备，${failedDeletes} 台删除失败。`, 'warning'); } else { showAlert(`已成功删除所有 ${successfulDeletes} 台设备。`, 'success'); } await loadMachinesFromBackend(); } catch (error) { showAlert(`删除过程中发生错误: ${error.message}`, 'danger'); } finally { hideLoading(); } }
+    function updateMachinesTable() { const tableBody = document.getElementById('machinesTableBody'); const filterValue = document.getElementById('machineAreaFilter').value; tableBody.innerHTML = ''; const machinesToDisplay = machines.filter(machine => filterValue === '' || machine.area === filterValue); if (machinesToDisplay.length === 0) { tableBody.innerHTML = '<tr><td colspan="5" class="text-center">暂无设备数据</td></tr>'; return; } machinesToDisplay.forEach((machine, index) => { const row = document.createElement('tr'); row.innerHTML = `<td>${index + 1}</td><td>${machine.area}</td><td>${machine.machineId}</td><td>${machine.desc || ''}</td><td><button class="btn btn-sm btn-danger delete-machine" data-machine-id="${machine.machineId}"><i class="fas fa-trash-alt"></i> 删除</button></td>`; tableBody.appendChild(row); }); }
+    function filterMachinesTable() { updateMachinesTable(); }
+    function updateMachineStats() { document.getElementById('totalMachinesCount').textContent = machines.length; const areas = new Set(machines.map(m => m.area)); document.getElementById('totalAreasCount').textContent = areas.size; document.getElementById('avgMachinesPerArea').textContent = areas.size > 0 ? (machines.length / areas.size).toFixed(1) : 0; }
+    function previewImportMachines() { const fileInput = document.getElementById('importMachinesFile'); const file = fileInput.files[0]; const statusEl = document.getElementById('importMachinesStatus'); const previewTable = document.getElementById('importMachinesPreview').querySelector('tbody'); if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; } const reader = new FileReader(); reader.onload = function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, {type: 'array'}); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const jsonData = XLSX.utils.sheet_to_json(worksheet, {header: 1, defval: ''}); if (jsonData.length <= 1) { previewTable.innerHTML = '<tr><td colspan="3" class="text-center">Excel文件中没有数据</td></tr>'; return; } const requiredFields = ['作业区域', '设备编号']; const header = jsonData[0]; const hasRequiredFields = requiredFields.every(field => header.includes(field)); if (!hasRequiredFields) { previewTable.innerHTML = `<tr><td colspan="3" class="text-center">文件格式不正确，需要包含列：${requiredFields.join(', ')}</td></tr>`; return; } let html = ''; for (let i = 1; i < Math.min(6, jsonData.length); i++) { const row = jsonData[i]; html += `<tr><td>${row[header.indexOf('作业区域')] || ''}</td><td>${row[header.indexOf('设备编号')] || ''}</td><td>${row[header.indexOf('设备描述')] || ''}</td></tr>`; } if (jsonData.length > 6) { html += `<tr><td colspan="3" class="text-center">...只显示前5行，共${jsonData.length - 1}行数据</td></tr>`; } previewTable.innerHTML = html; statusEl.innerHTML = `<div class="alert alert-success">检测到 ${jsonData.length - 1} 条设备记录</div>`; } catch (error) { console.error('预览设备Excel出错:', error); previewTable.innerHTML = '<tr><td colspan="3" class="text-center">处理文件时出错</td></tr>'; statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>'; } }; reader.readAsArrayBuffer(file); }
+    async function processImportMachinesFile() { const fileInput = document.getElementById('importMachinesFile'); const file = fileInput.files[0]; const statusEl = document.getElementById('importMachinesStatus'); if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; } showLoading(); try { const data = await file.arrayBuffer(); const workbook = XLSX.read(data, { type: 'array' }); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' }); if (jsonData.length === 0) { statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>'; hideLoading(); return; } const requiredFields = ['作业区域', '设备编号']; const hasRequiredFields = requiredFields.every(field => Object.keys(jsonData[0]).includes(field)); if (!hasRequiredFields) { statusEl.innerHTML = `<div class="alert alert-danger">Excel文件格式不正确，需要包含列：${requiredFields.join(', ')}</div>`; hideLoading(); return; } const machinesToImport = jsonData.map(item => ({ area: item['作业区域'], machine_id: item['设备编号']?.toString().trim(), desc: item['设备描述'] || '' })).filter(item => item.area && item.machine_id); const importPromises = machinesToImport.map(machine => fetch('/.netlify/functions/machines', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(machine) })); const results = await Promise.allSettled(importPromises); const successfulImports = results.filter(r => r.status === 'fulfilled' && r.value.ok).length; const failedImports = results.length - successfulImports; if (failedImports > 0) { showAlert(`成功导入 ${successfulImports} 台设备，${failedImports} 台失败。`, 'warning'); } else { showAlert(`成功导入所有 ${successfulImports} 台设备。`, 'success'); } bootstrap.Modal.getInstance(document.getElementById('importMachinesModal'))?.hide(); await loadMachinesFromBackend(); } catch (error) { console.error('批量导入设备失败:', error); showAlert(`处理文件时出错: ${error.message}`, 'danger'); } finally { hideLoading(); } }
+    function openMachineSelectModal() { if (manualMachineInputEnabled) { showAlert('请先切换回选择列表模式', 'warning'); return; } if (!currentWorkArea) { showAlert('请先登录并选择作业区域', 'warning'); return; } document.getElementById('machineSearchInput').value = ''; updateMachineModalList(); new bootstrap.Modal(document.getElementById('machineSelectModal')).show(); }
+    function updateMachineModalList() { const listElement = document.getElementById('machineSelectList'); const searchInput = document.getElementById('machineSearchInput').value.toLowerCase(); const countDisplay = document.getElementById('machineModalCount'); let filteredMachines = machines.filter(m => m.area === currentWorkArea); if (searchInput) { filteredMachines = filteredMachines.filter(m => m.machineId.toLowerCase().includes(searchInput) || (m.desc && m.desc.toLowerCase().includes(searchInput))); } countDisplay.textContent = filteredMachines.length; if (filteredMachines.length === 0) { listElement.innerHTML = '<div class="text-center text-muted">暂无匹配的设备</div>'; return; } filteredMachines.sort((a, b) => a.machineId.localeCompare(b.machineId, undefined, { numeric: true })); let html = ''; const selectedMachineId = document.getElementById('machineId').value; filteredMachines.forEach(machine => { const isSelected = machine.machineId === selectedMachineId; const descText = machine.desc ? `<div class="machine-modal-desc">${machine.desc}</div>` : ''; html += `<div class="machine-modal-item ${isSelected ? 'selected' : ''}" data-machine-id="${machine.machineId}"><div class="machine-modal-id">${machine.machineId}</div>${descText}</div>`; }); listElement.innerHTML = html; }
+    function selectMachine(machineId) { document.getElementById('machineId').value = machineId; }
     // ###########  END: Machine Management Functions  ###########
     
   </script>
