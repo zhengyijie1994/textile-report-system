@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+html
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
@@ -745,19 +746,16 @@
                 <label for="remarks">备注：</label>
                 <textarea id="remarks" class="form-control" rows="2"></textarea>
               </div>
+              <!-- ########## MODIFIED: Button Layout Changed ########## -->
               <div class="d-flex justify-content-between">
-                <div>
-                  <button type="submit" class="btn btn-primary me-2 btn-hover-grow">
-                    <i class="fas fa-paper-plane me-2"></i>提交报工
-                  </button>
-                  <button type="button" id="resetReportBtn" class="btn btn-secondary me-2 btn-hover-grow">
-                    <i class="fas fa-redo me-2"></i>重置
-                  </button>
-                </div>
-                <button type="button" id="uploadExcelBtn" class="btn btn-info btn-hover-grow">
-                  <i class="fas fa-upload me-2"></i>上传匹配表
+                <button type="button" id="resetReportBtn" class="btn btn-secondary btn-hover-grow">
+                  <i class="fas fa-redo me-2"></i>重置
+                </button>
+                <button type="submit" class="btn btn-primary btn-hover-grow">
+                  <i class="fas fa-paper-plane me-2"></i>提交报工
                 </button>
               </div>
+              <!-- ####################################################### -->
             </form>
             <div id="matchResult" class="match-result mt-4" style="display: none;"></div>
           </div>
@@ -1176,6 +1174,27 @@
             </div>
           </div>
         </div>
+
+        <!-- ########## NEW: Match Table Management Card ########## -->
+        <div class="card mb-4">
+            <div class="card-header">原料匹配表管理</div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i>
+                    管理用于自动填充原料信息的“坯布-原料”匹配表。
+                </div>
+                <div class="d-flex gap-2">
+                    <button type="button" id="uploadExcelBtn" class="btn btn-info btn-hover-grow">
+                        <i class="fas fa-upload me-2"></i>上传/更新匹配表
+                    </button>
+                    <button type="button" id="deleteMatchTableBtn" class="btn btn-danger btn-hover-grow">
+                        <i class="fas fa-trash-alt me-2"></i>删除所有匹配数据
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- ###################################################### -->
+
         <!-- 新增测试数据生成功能 -->
         <div class="card mb-4 test-data-card">
           <div class="card-header">系统压力测试</div>
@@ -1713,6 +1732,7 @@
           '<tr><td colspan="3" class="text-center">上传Excel文件后预览数据</td></tr>';
         new bootstrap.Modal(document.getElementById('uploadModal')).show();
       });
+      document.getElementById('deleteMatchTableBtn').addEventListener('click', deleteMatchTable); // NEW event listener
       document.getElementById('processExcelBtn').addEventListener('click', processExcelFile);
       document.getElementById('filterSummaryBtn').addEventListener('click', filterSummaryData);
       document.getElementById('clearFilterBtn').addEventListener('click', clearFilters);
@@ -1801,7 +1821,37 @@
     function toggleManualMachineInput() { const machineInput = document.getElementById('machineId'); const selectBtn = document.getElementById('selectMachineBtn'); const toggleBtn = document.getElementById('toggleMachineInputBtn'); manualMachineInputEnabled = !manualMachineInputEnabled; machineInput.readOnly = !manualMachineInputEnabled; selectBtn.disabled = manualMachineInputEnabled; if (manualMachineInputEnabled) { toggleBtn.innerHTML = '<i class="fas fa-list"></i>'; toggleBtn.title = '切换回选择列表'; machineInput.placeholder = "请输入设备编号"; } else { toggleBtn.innerHTML = '<i class="fas fa-keyboard"></i>'; toggleBtn.title = "切换手动输入"; machineInput.placeholder = "请输入或选择设备编号"; } }
     function handleMatch() { const greyClothId = document.getElementById('greyClothId').value.trim(); const matchResult = document.getElementById('matchResult'); matchResult.innerHTML = ''; if (!greyClothId || !materialMatches.length) { matchResult.style.display = 'none'; return; } const matches = materialMatches.filter(item => item['坯布编号']?.toString().includes(greyClothId)); if (matches.length === 0) { matchResult.style.display = 'block'; matchResult.innerHTML = ` <div class="alert alert-warning"> <p>未找到匹配的坯布编号</p> <button class="btn btn-sm btn-info mt-2" id="enableManualBtn"> <i class="fas fa-pencil-alt me-1"></i>手动输入原料信息 </button> </div> `; document.getElementById('enableManualBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); return; } matchResult.style.display = 'block'; if (matches.length === 1) { const match = matches[0]; document.getElementById('materialCode').value = match['原料编号'] || ''; document.getElementById('materialName').value = match['原料名称'] || ''; matchResult.innerHTML = ` <div class="alert alert-success"> <p><strong>已匹配到原料信息：</strong></p> <p>坯布编号: ${match['坯布编号'] || ''}</p> <p>原料编号: ${match['原料编号'] || ''}</p> <p>原料名称: ${match['原料名称'] || ''}</p> <button class="btn btn-sm btn-outline-secondary mt-2" id="manualOverrideBtn"> <i class="fas fa-pencil-alt me-1"></i>手动修改原料信息 </button> </div> `; document.getElementById('manualOverrideBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); } else { let tableHTML = ` <div class="alert alert-info">找到 ${matches.length} 条匹配记录，请选择</div> <table class="table table-bordered"> <tr> <th>选择</th> <th>坯布编号</th> <th>原料编号</th> <th>原料名称</th> </tr> `; matches.forEach((m, i) => { tableHTML += ` <tr> <td><button class="btn btn-sm btn-primary select-match" data-index="${i}">选择</button></td> <td>${m['坯布编号']}</td> <td>${m['原料编号']}</td> <td>${m['原料名称']}</td> </tr> `; }); tableHTML += ` <tr> <td colspan="4" class="text-center"> <button class="btn btn-sm btn-outline-info mt-2" id="manualInputOptionBtn"> <i class="fas fa-pencil-alt me-1"></i>手动输入原料信息 </button> </td> </tr> </table>`; matchResult.innerHTML = tableHTML; document.querySelectorAll('.select-match').forEach(btn => { btn.addEventListener('click', () => { const m = matches[btn.dataset.index]; document.getElementById('materialCode').value = m['原料编号'] || ''; document.getElementById('materialName').value = m['原料名称'] || ''; matchResult.innerHTML = ` <div class="alert alert-success"> <p><strong>已选择原料信息：</strong></p> <p>坯布编号: ${m['坯布编号'] || ''}</p> <p>原料编号: ${m['原料编号'] || ''}</p> <p>原料名称: ${m['原料名称'] || ''}</p> <button class="btn btn-sm btn-outline-secondary mt-2" id="manualOverrideBtn"> <i class="fas fa-pencil-alt me-1"></i>手动修改原料信息 </button> </div> `; document.getElementById('manualOverrideBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); }); }); document.getElementById('manualInputOptionBtn').addEventListener('click', () => { if (!manualInputEnabled) { toggleManualInput(); } }); } }
     function handleGreyClothInput() { clearTimeout(debounceTimer); const inputValue = greyClothIdInput.value.trim(); greyClothSuggestions.innerHTML = ''; greyClothSuggestions.style.display = 'none'; if (inputValue.length < 2) { return; } debounceTimer = setTimeout(() => { const uniqueSuggestions = new Set(); materialMatches.forEach(item => { const clothNum = item['坯布编号']?.toString() || ''; if (clothNum.includes(inputValue)) { uniqueSuggestions.add(clothNum); } }); if (uniqueSuggestions.size === 0) { return; } let html = ''; uniqueSuggestions.forEach(suggestion => { const matchIndex = suggestion.indexOf(inputValue); if (matchIndex !== -1) { const before = suggestion.substring(0, matchIndex); const match = suggestion.substring(matchIndex, matchIndex + inputValue.length); const after = suggestion.substring(matchIndex + inputValue.length); html += `<a class="dropdown-item" href="#">${before}<span class="suggestion-highlight">${match}</span>${after}</a>`; } else { html += `<a class="dropdown-item" href="#">${suggestion}</a>`; } }); greyClothSuggestions.innerHTML = html; greyClothSuggestions.style.display = 'block'; greyClothSuggestions.querySelectorAll('.dropdown-item').forEach(item => { item.addEventListener('click', (e) => { e.preventDefault(); const text = item.textContent; greyClothIdInput.value = text; greyClothSuggestions.innerHTML = ''; greyClothSuggestions.style.display = 'none'; handleMatch(); }); }); }, 300); }
-    function processExcelFile() { const fileInput = document.getElementById('excelFile'); const file = fileInput.files[0]; const statusEl = document.getElementById('uploadStatus'); if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; } const reader = new FileReader(); reader.onload = async function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' }); if (jsonData.length === 0) { statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>'; return; } const requiredFields = ['坯布编号', '原料编号', '原料名称']; const hasRequiredFields = requiredFields.every(field => Object.keys(jsonData[0]).includes(field)); if (!hasRequiredFields) { statusEl.innerHTML = '<div class="alert alert-danger">Excel文件格式不正确，需要包含列：坯布编号, 原料编号, 原料名称</div>'; return; } const processedData = jsonData.map(item => ({ '坯布编号': item['坯布编号'] || '', '原料编号': item['原料编号'] || '', '原料名称': item['原料名称'] || '' })); materialMatches = processedData; localStorage.setItem('materialMatches', JSON.stringify(processedData)); statusEl.innerHTML = '<div class="alert alert-success">原料匹配表更新成功</div>'; new bootstrap.Modal(document.getElementById('uploadModal')).hide(); updateMemoryUsage(); } catch (error) { console.error('处理Excel文件出错:', error); statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>'; } }; reader.readAsArrayBuffer(file); }
+    async function processExcelFile() { const fileInput = document.getElementById('excelFile'); const file = fileInput.files[0]; const statusEl = document.getElementById('uploadStatus'); if (!file) { statusEl.innerHTML = '<div class="alert alert-danger">请选择Excel文件</div>'; return; } const reader = new FileReader(); reader.onload = async function(e) { try { const data = new Uint8Array(e.target.result); const workbook = XLSX.read(data, { type: 'array' }); const firstSheetName = workbook.SheetNames[0]; const worksheet = workbook.Sheets[firstSheetName]; const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: '' }); if (jsonData.length === 0) { statusEl.innerHTML = '<div class="alert alert-warning">Excel文件中没有数据</div>'; return; } const requiredFields = ['坯布编号', '原料编号', '原料名称']; const hasRequiredFields = requiredFields.every(field => Object.keys(jsonData[0]).includes(field)); if (!hasRequiredFields) { statusEl.innerHTML = '<div class="alert alert-danger">Excel文件格式不正确，需要包含列：坯布编号, 原料编号, 原料名称</div>'; return; } const processedData = jsonData.map(item => ({ '坯布编号': item['坯布编号'] || '', '原料编号': item['原料编号'] || '', '原料名称': item['原料名称'] || '' })); /* 为后端做准备: 在这里，我们会将 processedData 发送到后端的POST或PUT端点, 例如: await fetch('/.netlify/functions/matches', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(processedData) }); */ materialMatches = processedData; localStorage.setItem('materialMatches', JSON.stringify(processedData)); /* 在成功的后端更新后，最好重新从后端加载数据以确保同步 await loadMatchesFromBackend(); */ statusEl.innerHTML = '<div class="alert alert-success">原料匹配表更新成功</div>'; bootstrap.Modal.getInstance(document.getElementById('uploadModal'))?.hide(); updateMemoryUsage(); } catch (error) { console.error('处理Excel文件出错:', error); statusEl.innerHTML = '<div class="alert alert-danger">处理文件时出错，请检查文件格式</div>'; } }; reader.readAsArrayBuffer(file); }
+    // +++ NEW: 删除所有原料匹配数据 +++
+    async function deleteMatchTable() {
+        if (!confirm('警告：此操作将删除所有原料匹配数据，之后将无法自动匹配原料信息。确定要继续吗？')) {
+            return;
+        }
+
+        showLoading();
+        try {
+            // 为后端准备的API调用
+            const response = await fetch('/.netlify/functions/matches', {
+                method: 'DELETE'
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || '删除失败');
+            }
+
+            // 如果API调用成功，清空本地数据
+            materialMatches = [];
+            
+            showAlert('所有原料匹配数据已成功删除。', 'success');
+            updateMemoryUsage();
+        } catch (error) {
+            console.error('删除匹配数据失败:', error);
+            showAlert(`删除失败: ${error.message}`, 'danger');
+        } finally {
+            hideLoading();
+        }
+    }
     function filterSummaryData() { const workerId = document.getElementById('summaryWorkerId').value; const workArea = document.getElementById('summaryWorkArea').value; const operationType = document.getElementById('summaryOperationType').value; const dateFrom = document.getElementById('summaryDateFrom').value; const dateTo = document.getElementById('summaryDateTo').value; filteredReports = reports.filter(report => { const isWorkerMatch = workerId === '' || report.workerId === workerId; const isWorkAreaMatch = workArea === '' || report.workArea === workArea; const isOperationTypeMatch = operationType === '' || report.operationType === operationType; const isDateMatch = (dateFrom === '' || report.productionDate >= dateFrom) && (dateTo === '' || report.productionDate <= dateTo); return isWorkerMatch && isWorkAreaMatch && isOperationTypeMatch && isDateMatch; }); currentPage = 1; updateSummaryTable(); updateSummaryStats(); }
     async function exportToExcel() { const progressModal = new bootstrap.Modal(document.getElementById('exportProgressModal')); progressModal.show(); const progressBar = document.getElementById('exportProgressBar'); const progressText = document.getElementById('exportProgressText'); const statusEl = document.getElementById('exportStatus'); progressBar.style.width = '0%'; progressText.textContent = '0%'; statusEl.innerHTML = '<div class="alert alert-info">开始导出...</div>'; try { const wb = XLSX.utils.book_new(); const batchSize = 10000; const batchCount = Math.ceil(filteredReports.length / batchSize); if (filteredReports.length <= batchSize) { const ws = XLSX.utils.json_to_sheet(filteredReports); XLSX.utils.book_append_sheet(wb, ws, '报工数据'); progressBar.style.width = '100%'; progressText.textContent = '100%'; statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>'; setTimeout(() => { XLSX.writeFile(wb, '报工数据.xlsx'); statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>'; }, 500); return; } statusEl.innerHTML = `<div class="alert alert-info">正在处理大量数据（${filteredReports.length}条），请稍候...</div>`; const processBatch = async (batchIndex) => { const start = batchIndex * batchSize; const end = Math.min(start + batchSize, filteredReports.length); const batchData = filteredReports.slice(start, end); const ws = XLSX.utils.json_to_sheet(batchData); const sheetName = `报工数据${batchIndex + 1}`; XLSX.utils.book_append_sheet(wb, ws, sheetName); const progress = Math.round(((batchIndex + 1) / batchCount) * 100); progressBar.style.width = `${progress}%`; progressText.textContent = `${progress}%`; if (batchIndex < batchCount - 1) { await new Promise(resolve => setTimeout(resolve, 0)); await processBatch(batchIndex + 1); } }; await processBatch(0); statusEl.innerHTML = '<div class="alert alert-success">正在生成Excel文件...</div>'; setTimeout(() => { XLSX.writeFile(wb, '报工数据.xlsx'); statusEl.innerHTML = '<div class="alert alert-success">导出成功！</div>'; }, 500); } catch (error) { console.error('导出Excel失败:', error); statusEl.innerHTML = `<div class="alert alert-danger">导出失败: ${error.message}</div>`; } }
     function updateWorkersTable() { const tableBody = document.getElementById('workersTableBody'); tableBody.innerHTML = ''; workers.forEach((worker, index) => { const row = document.createElement('tr'); const workerReports = reports.filter(report => report.workerId === worker.workerId); const reportCount = workerReports.length; let lastReportDate = '无记录'; if (reportCount > 0) { const dates = workerReports.map(r => new Date(r.timestamp).getTime()); const maxDate = new Date(Math.max(...dates)); lastReportDate = maxDate.toISOString().split('T')[0]; } row.innerHTML = ` <td>${index + 1}</td> <td>${worker.workerId}</td> <td>${worker.name}</td> <td>${reportCount}</td> <td>${lastReportDate}</td> <td> <button class="btn btn-sm btn-danger delete-worker" data-worker-id="${worker.workerId}"> <i class="fas fa-trash-alt"></i> 删除 </button> </td> `; tableBody.appendChild(row); }); if (workers.length === 0) { tableBody.innerHTML = '<tr><td colspan="6" class="text-center">暂无员工数据</td></tr>'; } }
