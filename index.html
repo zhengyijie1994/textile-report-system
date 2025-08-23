@@ -11,8 +11,9 @@ html
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
-  <!-- 新增: Tesseract.js OCR 库 -->
+  <!-- ########## NEW: Tesseract.js for OCR ########## -->
   <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+  <!-- ############################################## -->
   <style>
     /* 您的所有 CSS 样式代码都保持不变 */
     :root {
@@ -557,40 +558,52 @@ html
     grid-template-columns: repeat(2, 1fr);
   }
 }
-    /* ########## START: 新增拍照识别样式 ########## */
-    #camera-container {
-      position: relative;
-      width: 100%;
-      max-width: 800px;
-      margin: 0 auto;
-      overflow: hidden;
-      border-radius: 8px;
+/* ########## NEW: Camera Modal Styles ########## */
+#cameraModal .modal-dialog {
+    max-width: 95vw;
+}
+@media (min-width: 768px) {
+    #cameraModal .modal-dialog {
+        max-width: 800px;
     }
-    #camera-video {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    #camera-overlay {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 80%;
-      height: 25%;
-      transform: translate(-50%, -50%);
-      border: 3px solid #28a745;
-      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
-      border-radius: 8px;
-    }
-    #camera-canvas {
-      display: none; /* 隐藏用于捕获图像的canvas */
-    }
-    #ocr-status {
-      min-height: 50px;
-      text-align: center;
-      font-weight: bold;
-    }
-    /* ########## END: 新增拍照识别样式 ########## */
+}
+#camera-container {
+    position: relative;
+    width: 100%;
+    max-height: 70vh;
+    overflow: hidden;
+    background-color: #000;
+    border-radius: 8px;
+}
+#camera-video, #camera-preview {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+#scan-box {
+    position: absolute;
+    left: 10%;
+    top: 50%;
+    width: 80%;
+    height: 25%;
+    transform: translateY(-50%);
+    border: 3px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+    border-radius: 8px;
+}
+#camera-status {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0,0,0,0.7);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    z-index: 10;
+}
+/* ############################################## */
   </style>
 </head>
 <body>
@@ -708,17 +721,17 @@ html
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="materialCode">原料编号：</label>
+                    <!-- ########## MODIFIED: Added Camera Button ########## -->
                     <div class="input-group">
-                      <input type="text" id="materialCode" class="form-control" readonly>
-                      <!-- ########## MODIFIED: 添加拍照识别按钮 ########## -->
-                      <button type="button" id="scanMaterialCodeBtn" class="btn btn-outline-info btn-hover-grow" title="拍照识别">
-                        <i class="fas fa-camera"></i>
+                      <input type="text" id="materialCode" class="form-control">
+                      <button type="button" id="scanMaterialCodeBtn" class="btn btn-outline-primary" title="拍照识别">
+                          <i class="fas fa-camera"></i>
                       </button>
-                      <!-- ################################################ -->
-                      <button type="button" id="toggleMaterialInputBtn" class="btn btn-outline-secondary btn-hover-grow" title="手动编辑">
+                      <button type="button" id="toggleMaterialInputBtn" class="btn btn-outline-secondary btn-hover-grow" title="手动输入">
                         <i class="fas fa-pencil-alt"></i>
                       </button>
                     </div>
+                    <!-- ####################################################### -->
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -1522,44 +1535,34 @@ html
       </div>
     </div>
   </div>
-  
-  <!-- ########## NEW: 拍照识别模态框 ########## -->
-  <div class="modal fade" id="cameraScanModal" tabindex="-1" aria-labelledby="cameraScanModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="cameraScanModalLabel">扫描原料编号</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="camera-container">
-            <video id="camera-video" playsinline></video>
-            <div id="camera-overlay"></div>
-            <canvas id="camera-canvas"></canvas>
-          </div>
-          <div id="ocr-status" class="mt-3">
-            <div class="alert alert-info">请将原料编号对准长方形框内，然后点击拍照。</div>
-          </div>
-          <div id="ocr-result-container" class="mt-3" style="display:none;">
-            <h6>识别结果:</h6>
-            <div class="input-group">
-              <input type="text" id="ocr-result-text" class="form-control" readonly>
-              <button class="btn btn-success" type="button" id="use-ocr-result-btn">
-                <i class="fas fa-check me-2"></i>使用此编号
-              </button>
+
+  <!-- ########## NEW: Camera Modal for OCR ########## -->
+  <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cameraModalLabel">扫描原料编号</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-          </div>
+            <div class="modal-body p-2">
+                <div id="camera-container">
+                    <video id="camera-video" playsinline autoplay></video>
+                    <canvas id="camera-preview" style="display:none;"></canvas>
+                    <div id="scan-box"></div>
+                    <div id="camera-status">请将编号对准扫描框</div>
+                </div>
+                <canvas id="processing-canvas" style="display:none;"></canvas>
+            </div>
+            <div class="modal-footer justify-content-center">
+                <button type="button" class="btn btn-primary" id="captureBtn"><i class="fas fa-camera"></i> 拍照</button>
+                <button type="button" class="btn btn-secondary" id="retakeBtn" style="display:none;"><i class="fas fa-redo"></i> 重拍</button>
+                <button type="button" class="btn btn-success" id="confirmCaptureBtn" style="display:none;"><i class="fas fa-check"></i> 使用照片</button>
+            </div>
         </div>
-        <div class="modal-footer justify-content-center">
-          <button type="button" id="capture-btn" class="btn btn-primary btn-lg">
-            <i class="fas fa-camera-retro me-2"></i>拍照
-          </button>
-        </div>
-      </div>
     </div>
   </div>
-  <!-- ########################################## -->
-
+  <!-- ############################################## -->
+  
   <script>
     // #################################################################
     // ###########       START: MODIFIED JAVASCRIPT          ###########
@@ -1581,9 +1584,6 @@ html
     // 分页相关变量
     let currentPage = 1;
     const itemsPerPage = 30;
-    // ##### NEW: OCR & Camera variables #####
-    let cameraStream = null;
-    const cameraModal = new bootstrap.Modal(document.getElementById('cameraScanModal'));
     
     // DOM元素
     const tabs = bootstrap.Tab.getOrCreateInstance(document.getElementById('mainTabs'));
@@ -1591,6 +1591,9 @@ html
     const greyClothIdInput = document.getElementById('greyClothId');
     const greyClothSuggestions = document.getElementById('greyClothSuggestions');
     const loadingOverlay = document.getElementById('loadingOverlay');
+
+    // OCR 相关变量
+    let cameraStream = null;
     
     // 显示加载指示器
     function showLoading() {
@@ -1888,150 +1891,16 @@ html
               bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide();
           }
       });
-      // ##### NEW: OCR Camera Event Listeners #####
-      document.getElementById('scanMaterialCodeBtn').addEventListener('click', openCameraScanner);
-      document.getElementById('capture-btn').addEventListener('click', captureAndRecognize);
-      document.getElementById('use-ocr-result-btn').addEventListener('click', useOcrResult);
-      // 确保关闭模态框时停止摄像头
-      document.getElementById('cameraScanModal').addEventListener('hidden.bs.modal', stopCameraScanner);
-    }
-    
-    // ########### START: OCR and Camera Functions ###########
-    
-    // 打开摄像头扫描模态框
-    async function openCameraScanner() {
-      const video = document.getElementById('camera-video');
-      // 重置状态
-      document.getElementById('ocr-result-container').style.display = 'none';
-      document.getElementById('ocr-status').innerHTML = '<div class="alert alert-info">请将原料编号对准长方形框内，然后点击拍照。</div>';
-      document.getElementById('capture-btn').disabled = false;
 
-      // 检查摄像头权限
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        showAlert('您的浏览器不支持摄像头功能。', 'danger');
-        return;
-      }
-      
-      try {
-        // 优先使用后置摄像头
-        const constraints = {
-          video: {
-            facingMode: 'environment'
-          }
-        };
-        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = cameraStream;
-        await video.play();
-        cameraModal.show();
-      } catch (err) {
-        console.error("摄像头访问失败:", err);
-        showAlert('无法访问摄像头。请检查权限或尝试使用其他摄像头。', 'danger');
-      }
+      // ########## NEW: OCR Event Listeners ##########
+      document.getElementById('scanMaterialCodeBtn').addEventListener('click', openCameraModal);
+      const cameraModalEl = document.getElementById('cameraModal');
+      cameraModalEl.addEventListener('hidden.bs.modal', stopCamera);
+      document.getElementById('captureBtn').addEventListener('click', captureImage);
+      document.getElementById('retakeBtn').addEventListener('click', retakeImage);
+      document.getElementById('confirmCaptureBtn').addEventListener('click', recognizeText);
+      // ##############################################
     }
-    
-    // 停止摄像头
-    function stopCameraScanner() {
-      if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        cameraStream = null;
-      }
-    }
-    
-    // 拍照并进行OCR识别
-    async function captureAndRecognize() {
-      const captureBtn = document.getElementById('capture-btn');
-      const ocrStatus = document.getElementById('ocr-status');
-      const video = document.getElementById('camera-video');
-      const canvas = document.getElementById('camera-canvas');
-      const overlay = document.getElementById('camera-overlay');
-      const context = canvas.getContext('2d');
-      
-      if (!cameraStream) return;
-      
-      captureBtn.disabled = true;
-      ocrStatus.innerHTML = `
-        <div class="d-flex align-items-center justify-content-center text-primary">
-          <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-          <strong>正在识别中，请稍候...</strong>
-        </div>`;
-        
-      // 关键步骤: 根据视频和预览框的尺寸比例，精确裁剪出需要识别的区域
-      const videoWidth = video.videoWidth;
-      const videoHeight = video.videoHeight;
-      canvas.width = videoWidth;
-      canvas.height = videoHeight;
-      
-      const overlayRect = overlay.getBoundingClientRect();
-      const videoRect = video.getBoundingClientRect();
-
-      // 计算裁剪区域在原始视频帧中的坐标和尺寸
-      const scaleX = videoWidth / videoRect.width;
-      const scaleY = videoHeight / videoRect.height;
-      
-      const cropX = (overlayRect.left - videoRect.left) * scaleX;
-      const cropY = (overlayRect.top - videoRect.top) * scaleY;
-      const cropWidth = overlayRect.width * scaleX;
-      const cropHeight = overlayRect.height * scaleY;
-      
-      // 将视频帧绘制到canvas，然后裁剪出目标区域
-      context.drawImage(video, 0, 0, videoWidth, videoHeight);
-      const croppedImageData = context.getImageData(cropX, cropY, cropWidth, cropHeight);
-      
-      try {
-        const { data: { text } } = await Tesseract.recognize(
-          croppedImageData,
-          'eng', // 识别英文和数字
-          {
-            logger: m => {
-                if (m.status === 'recognizing text') {
-                    const progress = (m.progress * 100).toFixed(0);
-                    ocrStatus.innerHTML = `
-                        <div class="d-flex align-items-center justify-content-center text-primary">
-                            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                            <strong>正在识别中... ${progress}%</strong>
-                        </div>`;
-                }
-            }
-          }
-        );
-        
-        // 清理识别结果，只保留字母和数字
-        const cleanedText = text.replace(/[^a-zA-Z0-9]/g, '');
-        
-        if (cleanedText) {
-          document.getElementById('ocr-result-text').value = cleanedText;
-          document.getElementById('ocr-result-container').style.display = 'block';
-          ocrStatus.innerHTML = '<div class="alert alert-success">识别成功！请确认编号是否正确。</div>';
-        } else {
-          ocrStatus.innerHTML = '<div class="alert alert-warning">未能识别出任何字符，请重试。</div>';
-        }
-      } catch (error) {
-        console.error("OCR 识别失败:", error);
-        ocrStatus.innerHTML = '<div class="alert alert-danger">识别失败，请调整光线或角度后重试。</div>';
-      } finally {
-        captureBtn.disabled = false;
-      }
-    }
-    
-    // 使用识别出的结果
-    function useOcrResult() {
-      const resultText = document.getElementById('ocr-result-text').value;
-      const materialCodeInput = document.getElementById('materialCode');
-      materialCodeInput.value = resultText;
-      // 确保原料编号变为可编辑状态
-      materialCodeInput.readOnly = false;
-      document.getElementById('materialName').readOnly = false;
-      manualInputEnabled = true;
-      const toggleBtn = document.getElementById('toggleMaterialInputBtn');
-      toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-      toggleBtn.classList.remove('btn-outline-secondary');
-      toggleBtn.classList.add('btn-warning');
-      
-      cameraModal.hide(); // 隐藏模态框会自动触发stopCameraScanner
-      showAlert('原料编号已成功填入', 'success');
-    }
-    
-    // ########### END: OCR and Camera Functions ###########
     
     // --- 以下是其他未修改或仅做微调的函数，保持其原有功能 ---
     function clearFilters() { document.getElementById('summaryWorkerId').value = ''; document.getElementById('summaryWorkArea').value = ''; document.getElementById('summaryOperationType').value = ''; document.getElementById('summaryDateFrom').value = ''; document.getElementById('summaryDateTo').value = ''; filterSummaryData(); }
@@ -2411,6 +2280,194 @@ html
         document.getElementById('machineId').value = machineId;
     }
     // ###########  END: Machine Management Functions  ###########
+
+    // ########## NEW: OCR and Camera Functions ##########
+    
+    // 打开并初始化相机模态框
+    function openCameraModal() {
+      const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
+      cameraModal.show();
+      startCamera();
+      resetCameraUI();
+    }
+
+    // 重置相机界面到初始状态
+    function resetCameraUI() {
+      document.getElementById('camera-video').style.display = 'block';
+      document.getElementById('camera-preview').style.display = 'none';
+      document.getElementById('captureBtn').style.display = 'inline-block';
+      document.getElementById('retakeBtn').style.display = 'none';
+      document.getElementById('confirmCaptureBtn').style.display = 'none';
+      document.getElementById('scan-box').style.display = 'block';
+      updateCameraStatus('请将编号对准扫描框');
+    }
+
+    // 启动摄像头
+    async function startCamera() {
+      try {
+        if (cameraStream) {
+          stopCamera();
+        }
+        const constraints = {
+          video: {
+            facingMode: 'environment', // 优先使用后置摄像头
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        };
+        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        const videoElement = document.getElementById('camera-video');
+        videoElement.srcObject = cameraStream;
+      } catch (err) {
+        console.error("摄像头访问失败:", err);
+        updateCameraStatus('摄像头启动失败');
+        showAlert('无法访问摄像头，请检查权限。', 'danger');
+        bootstrap.Modal.getInstance(document.getElementById('cameraModal'))?.hide();
+      }
+    }
+
+    // 停止摄像头
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(track => track.stop());
+        cameraStream = null;
+      }
+    }
+
+    // 更新相机状态提示
+    function updateCameraStatus(text) {
+      document.getElementById('camera-status').textContent = text;
+    }
+
+    // 拍照并定格画面
+    function captureImage() {
+        const video = document.getElementById('camera-video');
+        const previewCanvas = document.getElementById('camera-preview');
+        const context = previewCanvas.getContext('2d');
+
+        // 设置canvas尺寸与视频流一致
+        previewCanvas.width = video.videoWidth;
+        previewCanvas.height = video.videoHeight;
+        
+        // 将视频当前帧绘制到canvas上
+        context.drawImage(video, 0, 0, previewCanvas.width, previewCanvas.height);
+        
+        // 切换UI状态
+        video.style.display = 'none';
+        previewCanvas.style.display = 'block';
+        document.getElementById('scan-box').style.display = 'none';
+        
+        document.getElementById('captureBtn').style.display = 'none';
+        document.getElementById('retakeBtn').style.display = 'inline-block';
+        document.getElementById('confirmCaptureBtn').style.display = 'inline-block';
+        
+        updateCameraStatus('照片已拍摄，请确认');
+    }
+
+    // 重新拍摄
+    function retakeImage() {
+        startCamera(); // 重新启动摄像头
+        resetCameraUI(); // 重置UI到初始状态
+    }
+
+    // 图像预处理函数
+    function preprocessImage(canvas) {
+        const processingCanvas = document.getElementById('processing-canvas');
+        const ctx = processingCanvas.getContext('2d');
+
+        // 1. 定义扫描框在Canvas中的精确坐标和尺寸
+        const video = document.getElementById('camera-video');
+        const scanBox = document.getElementById('scan-box');
+
+        const scaleX = canvas.width / video.clientWidth;
+        const scaleY = canvas.height / video.clientHeight;
+
+        const sx = scanBox.offsetLeft * scaleX;
+        const sy = scanBox.offsetTop * scaleY;
+        const sWidth = scanBox.offsetWidth * scaleX;
+        const sHeight = scanBox.offsetHeight * scaleY;
+
+        // 设置处理画布的尺寸为截取区域的尺寸
+        processingCanvas.width = sWidth;
+        processingCanvas.height = sHeight;
+
+        // 2. 从原始Canvas中截取扫描框内的图像数据
+        const imageData = canvas.getContext('2d').getImageData(sx, sy, sWidth, sHeight);
+        const data = imageData.data;
+
+        // 3. 图像处理：灰度化和增强对比度
+        const contrast = 100; // 对比度增强级别, -255 to 255
+        const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
+
+        for (let i = 0; i < data.length; i += 4) {
+            // 灰度化
+            const r = data[i];
+            const g = data[i + 1];
+            const b = data[i + 2];
+            let gray = 0.299 * r + 0.587 * g + 0.114 * b;
+            
+            // 增强对比度
+            gray = factor * (gray - 128) + 128;
+            gray = Math.max(0, Math.min(255, gray)); // 限制在0-255
+
+            data[i] = gray;
+            data[i + 1] = gray;
+            data[i + 2] = gray;
+        }
+
+        // 4. 将处理后的图像数据放回处理画布
+        ctx.putImageData(imageData, 0, 0);
+        
+        // 返回处理后的画布，用于OCR识别
+        return processingCanvas;
+    }
+
+    // 识别文字
+    async function recognizeText() {
+        updateCameraStatus('正在识别中...');
+        showLoading(); // 显示全局加载动画
+
+        try {
+            const previewCanvas = document.getElementById('camera-preview');
+            
+            // 对截取的图像进行预处理
+            const processedCanvas = preprocessImage(previewCanvas);
+            
+            // 创建Tesseract工作线程
+            const worker = await Tesseract.createWorker('eng', 1, {
+                logger: m => console.log(m) // 可以在控制台看到识别进度
+            });
+
+            // 设置白名单，只识别数字和英文字母
+            await worker.setParameters({
+                tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+            });
+            
+            // 开始识别
+            const { data: { text } } = await worker.recognize(processedCanvas);
+            
+            // 清理识别结果
+            const cleanedText = text.replace(/[\s\n\r]/g, ''); // 移除所有空白字符
+            
+            if (cleanedText) {
+                document.getElementById('materialCode').value = cleanedText;
+                showAlert(`识别成功: ${cleanedText}`, 'success');
+            } else {
+                showAlert('未能识别出有效字符', 'warning');
+            }
+
+            // 终止工作线程
+            await worker.terminate();
+
+        } catch (error) {
+            console.error('OCR识别失败:', error);
+            showAlert('识别失败，请重试', 'danger');
+        } finally {
+            hideLoading();
+            bootstrap.Modal.getInstance(document.getElementById('cameraModal'))?.hide();
+        }
+    }
+    // ##################################################
     
   </script>
 </body>
