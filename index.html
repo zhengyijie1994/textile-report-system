@@ -11,9 +11,6 @@ html
   <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>
-  <!-- ########## NEW: Tesseract.js for OCR ########## -->
-  <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
-  <!-- ############################################## -->
   <style>
     /* 您的所有 CSS 样式代码都保持不变 */
     :root {
@@ -558,52 +555,6 @@ html
     grid-template-columns: repeat(2, 1fr);
   }
 }
-/* ########## NEW: Camera Modal Styles ########## */
-#cameraModal .modal-dialog {
-    max-width: 95vw;
-}
-@media (min-width: 768px) {
-    #cameraModal .modal-dialog {
-        max-width: 800px;
-    }
-}
-#camera-container {
-    position: relative;
-    width: 100%;
-    max-height: 70vh;
-    overflow: hidden;
-    background-color: #000;
-    border-radius: 8px;
-}
-#camera-video, #camera-preview {
-    width: 100%;
-    height: auto;
-    display: block;
-}
-#scan-box {
-    position: absolute;
-    left: 10%;
-    top: 50%;
-    width: 80%;
-    height: 25%;
-    transform: translateY(-50%);
-    border: 3px solid rgba(255, 255, 255, 0.8);
-    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
-    border-radius: 8px;
-}
-#camera-status {
-    position: absolute;
-    bottom: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: rgba(0,0,0,0.7);
-    color: white;
-    padding: 8px 15px;
-    border-radius: 20px;
-    font-size: 0.9rem;
-    z-index: 10;
-}
-/* ############################################## */
   </style>
 </head>
 <body>
@@ -721,17 +672,12 @@ html
                 <div class="col-md-6">
                   <div class="form-group">
                     <label for="materialCode">原料编号：</label>
-                    <!-- ########## MODIFIED: Added Camera Button ########## -->
                     <div class="input-group">
-                      <input type="text" id="materialCode" class="form-control">
-                      <button type="button" id="scanMaterialCodeBtn" class="btn btn-outline-primary" title="拍照识别">
-                          <i class="fas fa-camera"></i>
-                      </button>
-                      <button type="button" id="toggleMaterialInputBtn" class="btn btn-outline-secondary btn-hover-grow" title="手动输入">
+                      <input type="text" id="materialCode" class="form-control" readonly>
+                      <button type="button" id="toggleMaterialInputBtn" class="btn btn-outline-secondary btn-hover-grow">
                         <i class="fas fa-pencil-alt"></i>
                       </button>
                     </div>
-                    <!-- ####################################################### -->
                   </div>
                 </div>
                 <div class="col-md-6">
@@ -1536,33 +1482,6 @@ html
     </div>
   </div>
 
-  <!-- ########## NEW: Camera Modal for OCR ########## -->
-  <div class="modal fade" id="cameraModal" tabindex="-1" aria-labelledby="cameraModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="cameraModalLabel">扫描原料编号</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-2">
-                <div id="camera-container">
-                    <video id="camera-video" playsinline autoplay></video>
-                    <canvas id="camera-preview" style="display:none;"></canvas>
-                    <div id="scan-box"></div>
-                    <div id="camera-status">请将编号对准扫描框</div>
-                </div>
-                <canvas id="processing-canvas" style="display:none;"></canvas>
-            </div>
-            <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-primary" id="captureBtn"><i class="fas fa-camera"></i> 拍照</button>
-                <button type="button" class="btn btn-secondary" id="retakeBtn" style="display:none;"><i class="fas fa-redo"></i> 重拍</button>
-                <button type="button" class="btn btn-success" id="confirmCaptureBtn" style="display:none;"><i class="fas fa-check"></i> 使用照片</button>
-            </div>
-        </div>
-    </div>
-  </div>
-  <!-- ############################################## -->
-  
   <script>
     // #################################################################
     // ###########       START: MODIFIED JAVASCRIPT          ###########
@@ -1591,9 +1510,6 @@ html
     const greyClothIdInput = document.getElementById('greyClothId');
     const greyClothSuggestions = document.getElementById('greyClothSuggestions');
     const loadingOverlay = document.getElementById('loadingOverlay');
-
-    // OCR 相关变量
-    let cameraStream = null;
     
     // 显示加载指示器
     function showLoading() {
@@ -1891,15 +1807,6 @@ html
               bootstrap.Modal.getInstance(document.getElementById('machineSelectModal')).hide();
           }
       });
-
-      // ########## NEW: OCR Event Listeners ##########
-      document.getElementById('scanMaterialCodeBtn').addEventListener('click', openCameraModal);
-      const cameraModalEl = document.getElementById('cameraModal');
-      cameraModalEl.addEventListener('hidden.bs.modal', stopCamera);
-      document.getElementById('captureBtn').addEventListener('click', captureImage);
-      document.getElementById('retakeBtn').addEventListener('click', retakeImage);
-      document.getElementById('confirmCaptureBtn').addEventListener('click', recognizeText);
-      // ##############################################
     }
     
     // --- 以下是其他未修改或仅做微调的函数，保持其原有功能 ---
@@ -2280,194 +2187,6 @@ html
         document.getElementById('machineId').value = machineId;
     }
     // ###########  END: Machine Management Functions  ###########
-
-    // ########## NEW: OCR and Camera Functions ##########
-    
-    // 打开并初始化相机模态框
-    function openCameraModal() {
-      const cameraModal = new bootstrap.Modal(document.getElementById('cameraModal'));
-      cameraModal.show();
-      startCamera();
-      resetCameraUI();
-    }
-
-    // 重置相机界面到初始状态
-    function resetCameraUI() {
-      document.getElementById('camera-video').style.display = 'block';
-      document.getElementById('camera-preview').style.display = 'none';
-      document.getElementById('captureBtn').style.display = 'inline-block';
-      document.getElementById('retakeBtn').style.display = 'none';
-      document.getElementById('confirmCaptureBtn').style.display = 'none';
-      document.getElementById('scan-box').style.display = 'block';
-      updateCameraStatus('请将编号对准扫描框');
-    }
-
-    // 启动摄像头
-    async function startCamera() {
-      try {
-        if (cameraStream) {
-          stopCamera();
-        }
-        const constraints = {
-          video: {
-            facingMode: 'environment', // 优先使用后置摄像头
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
-        };
-        cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
-        const videoElement = document.getElementById('camera-video');
-        videoElement.srcObject = cameraStream;
-      } catch (err) {
-        console.error("摄像头访问失败:", err);
-        updateCameraStatus('摄像头启动失败');
-        showAlert('无法访问摄像头，请检查权限。', 'danger');
-        bootstrap.Modal.getInstance(document.getElementById('cameraModal'))?.hide();
-      }
-    }
-
-    // 停止摄像头
-    function stopCamera() {
-      if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        cameraStream = null;
-      }
-    }
-
-    // 更新相机状态提示
-    function updateCameraStatus(text) {
-      document.getElementById('camera-status').textContent = text;
-    }
-
-    // 拍照并定格画面
-    function captureImage() {
-        const video = document.getElementById('camera-video');
-        const previewCanvas = document.getElementById('camera-preview');
-        const context = previewCanvas.getContext('2d');
-
-        // 设置canvas尺寸与视频流一致
-        previewCanvas.width = video.videoWidth;
-        previewCanvas.height = video.videoHeight;
-        
-        // 将视频当前帧绘制到canvas上
-        context.drawImage(video, 0, 0, previewCanvas.width, previewCanvas.height);
-        
-        // 切换UI状态
-        video.style.display = 'none';
-        previewCanvas.style.display = 'block';
-        document.getElementById('scan-box').style.display = 'none';
-        
-        document.getElementById('captureBtn').style.display = 'none';
-        document.getElementById('retakeBtn').style.display = 'inline-block';
-        document.getElementById('confirmCaptureBtn').style.display = 'inline-block';
-        
-        updateCameraStatus('照片已拍摄，请确认');
-    }
-
-    // 重新拍摄
-    function retakeImage() {
-        startCamera(); // 重新启动摄像头
-        resetCameraUI(); // 重置UI到初始状态
-    }
-
-    // 图像预处理函数
-    function preprocessImage(canvas) {
-        const processingCanvas = document.getElementById('processing-canvas');
-        const ctx = processingCanvas.getContext('2d');
-
-        // 1. 定义扫描框在Canvas中的精确坐标和尺寸
-        const video = document.getElementById('camera-video');
-        const scanBox = document.getElementById('scan-box');
-
-        const scaleX = canvas.width / video.clientWidth;
-        const scaleY = canvas.height / video.clientHeight;
-
-        const sx = scanBox.offsetLeft * scaleX;
-        const sy = scanBox.offsetTop * scaleY;
-        const sWidth = scanBox.offsetWidth * scaleX;
-        const sHeight = scanBox.offsetHeight * scaleY;
-
-        // 设置处理画布的尺寸为截取区域的尺寸
-        processingCanvas.width = sWidth;
-        processingCanvas.height = sHeight;
-
-        // 2. 从原始Canvas中截取扫描框内的图像数据
-        const imageData = canvas.getContext('2d').getImageData(sx, sy, sWidth, sHeight);
-        const data = imageData.data;
-
-        // 3. 图像处理：灰度化和增强对比度
-        const contrast = 100; // 对比度增强级别, -255 to 255
-        const factor = (259 * (contrast + 255)) / (255 * (259 - contrast));
-
-        for (let i = 0; i < data.length; i += 4) {
-            // 灰度化
-            const r = data[i];
-            const g = data[i + 1];
-            const b = data[i + 2];
-            let gray = 0.299 * r + 0.587 * g + 0.114 * b;
-            
-            // 增强对比度
-            gray = factor * (gray - 128) + 128;
-            gray = Math.max(0, Math.min(255, gray)); // 限制在0-255
-
-            data[i] = gray;
-            data[i + 1] = gray;
-            data[i + 2] = gray;
-        }
-
-        // 4. 将处理后的图像数据放回处理画布
-        ctx.putImageData(imageData, 0, 0);
-        
-        // 返回处理后的画布，用于OCR识别
-        return processingCanvas;
-    }
-
-    // 识别文字
-    async function recognizeText() {
-        updateCameraStatus('正在识别中...');
-        showLoading(); // 显示全局加载动画
-
-        try {
-            const previewCanvas = document.getElementById('camera-preview');
-            
-            // 对截取的图像进行预处理
-            const processedCanvas = preprocessImage(previewCanvas);
-            
-            // 创建Tesseract工作线程
-            const worker = await Tesseract.createWorker('eng', 1, {
-                logger: m => console.log(m) // 可以在控制台看到识别进度
-            });
-
-            // 设置白名单，只识别数字和英文字母
-            await worker.setParameters({
-                tessedit_char_whitelist: '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
-            });
-            
-            // 开始识别
-            const { data: { text } } = await worker.recognize(processedCanvas);
-            
-            // 清理识别结果
-            const cleanedText = text.replace(/[\s\n\r]/g, ''); // 移除所有空白字符
-            
-            if (cleanedText) {
-                document.getElementById('materialCode').value = cleanedText;
-                showAlert(`识别成功: ${cleanedText}`, 'success');
-            } else {
-                showAlert('未能识别出有效字符', 'warning');
-            }
-
-            // 终止工作线程
-            await worker.terminate();
-
-        } catch (error) {
-            console.error('OCR识别失败:', error);
-            showAlert('识别失败，请重试', 'danger');
-        } finally {
-            hideLoading();
-            bootstrap.Modal.getInstance(document.getElementById('cameraModal'))?.hide();
-        }
-    }
-    // ##################################################
     
   </script>
 </body>
